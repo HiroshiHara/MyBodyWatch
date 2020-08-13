@@ -1,0 +1,26 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:jest/recommended"
+  ],
+  "plugins": ["babel", "react", "flowtype", "jest"],
+  "parserOptions": {},
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "globals": {},
+  "rules": {
+    "react/jsx-uses-react": 1
+    // "prettier/prettier": "error"
+  },
+  "settings": {
+    "react": {
+      "createClass": "createReactClass",
+      "pragma": "React",
+      "version": "detect"
+    }
+  }
+}
