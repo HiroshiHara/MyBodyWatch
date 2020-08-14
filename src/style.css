@@ -16,6 +16,19 @@ a:visited {
   color: #f0f0f0;
 }
 
+#chart {
+  /* z-index: 1; */
+  padding-top: 200px;
+  opacity: 1;
+}
+
+#chart .c3-line-weight,
+.c3-line-bmi,
+.c3-line-bfp,
+.c3-line-mm {
+  stroke-width: 5px;
+}
+
 .header-wrapper {
   width: 100%;
   height: 100px;
