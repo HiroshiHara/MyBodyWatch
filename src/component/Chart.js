@@ -6,6 +6,8 @@ import React, { Component } from "react";
 import c3 from "c3";
 import "c3/c3.css";
 import { SAMPLE_DATA } from "../sampleData";
+import mongodb from "mongodb";
+import assert from "assert";
 
 type Props = {};
 type State = {};
@@ -36,6 +38,16 @@ export class Chart extends Component<Props, State> {
       data.kcal[i] = mockData[i].kcal;
       data.date[i] = mockData[i].date;
     }
+
+    /**
+     * connect to mongodb
+     */
+    // const MongoClient = mongodb.MongoClinent;
+    // MongoClient.connect("mongodb://127.0.0.1:27017/mybodywatch", (err, db) => {
+    //   assert.equal(null, err);
+    //   console.log("Connected successfully to server");
+    //   db.close();
+    // });
 
     c3.generate({
       /**
