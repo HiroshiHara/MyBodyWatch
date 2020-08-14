@@ -6,8 +6,6 @@ import React, { Component } from "react";
 import c3 from "c3";
 import "c3/c3.css";
 import { SAMPLE_DATA } from "../sampleData";
-import mongodb from "mongodb";
-import assert from "assert";
 
 type Props = {};
 type State = {};
