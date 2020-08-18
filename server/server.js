@@ -59,6 +59,12 @@ app.get("/", (req, res) => {
   res.sendFile(target + "index.html");
 });
 
+// Resolve GET request.
+app.get("/data", (req, res) => {
+  console.log("server res");
+  res.status(200).send();
+});
+
 // Resolve POST request.
 app.post("/postTest", (req, res) => {
   console.log(req.body);

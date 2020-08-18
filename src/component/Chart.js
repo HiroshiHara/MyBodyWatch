@@ -6,6 +6,7 @@ import React, { Component } from "react";
 import c3 from "c3";
 import "c3/c3.css";
 import { SAMPLE_DATA } from "../sampleData";
+import axios from "axios";
 
 type Props = {};
 type State = {};
@@ -37,15 +38,14 @@ export class Chart extends Component<Props, State> {
       data.date[i] = mockData[i].date;
     }
 
-    /**
-     * connect to mongodb
-     */
-    // const MongoClient = mongodb.MongoClinent;
-    // MongoClient.connect("mongodb://127.0.0.1:27017/mybodywatch", (err, db) => {
-    //   assert.equal(null, err);
-    //   console.log("Connected successfully to server");
-    //   db.close();
-    // });
+    axios
+      .get("/data")
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
 
     c3.generate({
       /**
