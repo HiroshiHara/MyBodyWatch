@@ -16,7 +16,7 @@ const bodydataSchema = new mongoose.Schema(
     bfp: Number,
     mm: Number,
     kcal: Number,
-    date: Date,
+    date: String,
   },
   {
     collection: "bodydata",
@@ -28,9 +28,6 @@ const bodydata = mongoose.model("bodydata", bodydataSchema);
 db.once("open", () => {
   console.log("Database connected:", url);
   // find all document from db.
-  bodydata.find({}, (err, docs) => {
-    console.log(docs);
-  });
 });
 
 db.on("error", (err) => {
@@ -47,7 +44,8 @@ const target = path.resolve("../dist/");
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Rooting for static files
-app.use(express.static(path.join(target)));
+app.use(express.static(target));
+// app.use(`/fuga/piyo`, express.static(path.join(__dirname, 'moi'))));
 
 // Listen on port 3000.
 app.listen(3000, () => {
@@ -56,16 +54,18 @@ app.listen(3000, () => {
 
 // Resolve GET request.
 app.get("/", (req, res) => {
-  res.sendFile(target + "index.html");
+  res.sendFile(target + "/index.html");
 });
 
 // Resolve GET request.
-app.get("/data", (req, res) => {
-  console.log("server res");
-  res.status(200).send();
+app.get("/Chart", (req, res) => {
+  console.log("GET request from Chart.js");
+  bodydata.find({}, (err, docs) => {
+    err ? res.status(500) : res.status(200).send(docs);
+  });
 });
 
-// Resolve POST request.
-app.post("/postTest", (req, res) => {
-  console.log(req.body);
+// 404 error for illegal request.
+app.use((req, res) => {
+  res.sendStatus(404);
 });
