@@ -91,6 +91,7 @@ module.exports = {
               ],
               plugins: [
                 "@babel/plugin-syntax-jsx",
+                "@babel/transform-runtime",
                 "transform-flow-strip-types",
                 "transform-class-properties",
               ],

@@ -5,9 +5,8 @@
 import React, { Component } from "react";
 import c3 from "c3";
 import "c3/c3.css";
-import { SAMPLE_DATA } from "../sampleData";
 
-type Props = {};
+type Props = { initData: Object };
 type State = {};
 
 export class Chart extends Component<Props, State> {
@@ -16,37 +15,7 @@ export class Chart extends Component<Props, State> {
   }
 
   renderChart() {
-    /**
-     * Generate mock data.
-     */
-    const mockData = SAMPLE_DATA;
-    const data = {
-      weight: [],
-      bmi: [],
-      bfp: [],
-      mm: [],
-      kcal: [],
-      date: [],
-    };
-    for (let i = 0; i < mockData.length; i++) {
-      data.weight[i] = mockData[i].weight;
-      data.bmi[i] = mockData[i].bmi;
-      data.bfp[i] = mockData[i].bfp;
-      data.mm[i] = mockData[i].mm;
-      data.kcal[i] = mockData[i].kcal;
-      data.date[i] = mockData[i].date;
-    }
-
-    /**
-     * connect to mongodb
-     */
-    // const MongoClient = mongodb.MongoClinent;
-    // MongoClient.connect("mongodb://127.0.0.1:27017/mybodywatch", (err, db) => {
-    //   assert.equal(null, err);
-    //   console.log("Connected successfully to server");
-    //   db.close();
-    // });
-
+    console.log(this.props.initData);
     c3.generate({
       /**
        * Rendering Chart on this id.
@@ -58,7 +27,7 @@ export class Chart extends Component<Props, State> {
        */
       data: {
         x: "date",
-        json: data,
+        json: this.props.initData,
         // "y2" define right y-axis for different unit.
         axes: {
           kcal: "y2",
