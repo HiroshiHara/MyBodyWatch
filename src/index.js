@@ -8,12 +8,12 @@ import { App } from "./component/App";
 import "./style.css";
 import axios from "axios";
 
-async function fetchChartData() {
+function fetchChartData() {
   let result = null;
   axios
     .get("/Chart")
     .then((res) => {
-      result = initData(res.data);
+      result = makeData(res.data);
       ReactDOM.render(
         <App initData={result} />,
         document.getElementById("app")
@@ -24,7 +24,7 @@ async function fetchChartData() {
     });
 }
 
-function initData(fetchData) {
+function makeData(fetchData) {
   const data = {
     weight: [],
     bmi: [],
