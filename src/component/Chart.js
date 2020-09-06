@@ -15,7 +15,6 @@ export class Chart extends Component<Props, State> {
   }
 
   renderChart() {
-    console.log(this.props.initData);
     c3.generate({
       /**
        * Rendering Chart on this id.
