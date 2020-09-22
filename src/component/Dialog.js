@@ -5,14 +5,16 @@
 import React, { Component } from "react";
 
 type Props = {
-  datetime: Date,
-  weight: number,
-  bmi: number,
-  bpf: number,
-  mm: number,
-  isVisible: Boolean,
-  isCreate: Boolean,
-  onAction: Function,
+  datetime: ?Date,
+  weight: ?number,
+  bmi: ?number,
+  bpf: ?number,
+  mm: ?number,
+  isDialogOpen: boolean,
+  isCreate: boolean,
+  onChange: Function,
+  onCreate: Function,
+  onCancel: Function,
 };
 type State = {};
 
@@ -24,7 +26,8 @@ export class Dialog extends Component<Props, State> {
   static defaultProps = {
     isVisible: false,
     isCreate: false,
-    onAction: () => {},
+    onCreate: () => {},
+    onCancel: () => {},
   };
 
   // When Dialog was closed, remove gray style.
@@ -34,29 +37,76 @@ export class Dialog extends Component<Props, State> {
 
   // When open Dialog on modal, add gray style to body.
   componentDidMount() {
-    if (this.props.isVisible) {
+    if (this.props.isDialogOpen) {
       document.body ? document.body.classList.add("dialogModalOpen") : null;
     }
-    // When user keydown 'Esc', close Dialog.
-    document.onkeydown = (e) => {
-      if (e.keyCode === 27) {
-        this.props.onAction("close");
-      }
-    };
   }
 
   render() {
+    const submitTitle = this.props.isCreate ? "ADD" : "UPDATE";
     return (
       <div className="dialog-wrapper">
         <div className="dialog-container">
-          <form action="POST">
-            <input type="datetime-local"></input>
-            <input type="number" step="0.1" name="weight"></input>
-            <input type="number" step="0.1" name="bmi"></input>
-            <input type="number" step="0.1" name="bpf"></input>
-            <input type="number" step="0.1" name="mm"></input>
-            <input type="submit" value="submit"></input>
-          </form>
+          {/* <form> */}
+          <label>Date:</label>
+          <input
+            type="datetime-local"
+            onChange={(e) => this.props.onChange(e, "date")}
+          ></input>
+          <br />
+          <label>Weight:</label>
+          <input
+            type="number"
+            step="0.1"
+            name="weight"
+            onChange={(e) => this.props.onChange(e, "weight")}
+          ></input>
+          <br />
+          <label>BMI:</label>
+          <input
+            type="number"
+            step="0.1"
+            name="bmi"
+            onChange={(e) => this.props.onChange(e, "bmi")}
+          ></input>
+          <br />
+          <label>BPF:</label>
+          <input
+            type="number"
+            step="0.1"
+            name="bpf"
+            onChange={(e) => this.props.onChange(e, "bpf")}
+          ></input>
+          <br />
+          <label>MM:</label>
+          <input
+            type="number"
+            step="0.1"
+            name="mm"
+            onChange={(e) => this.props.onChange(e, "mm")}
+          ></input>
+          <br />
+          <label>kcal:</label>
+          <input
+            type="number"
+            step="1"
+            name="kcal"
+            onChange={(e) => this.props.onChange(e, "kcal")}
+          ></input>
+          <br />
+          <div className="dialog-button">
+            <input
+              type="submit"
+              value={submitTitle}
+              onClick={(e) => this.props.onCreate(e, "create")}
+            ></input>
+            <input
+              type="button"
+              value="CANCEL"
+              onClick={(e) => this.props.onCancel(e, "cancel")}
+            ></input>
+          </div>
+          {/* </form> */}
         </div>
       </div>
     );

@@ -11,6 +11,7 @@ const app = express();
 const target = path.resolve("../dist/");
 
 // Setup the body-parser.
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Rooting for static files
@@ -27,12 +28,19 @@ app.get("/", (req, res) => {
   res.sendFile(target + "/index.html");
 });
 
-// Resolve GET request.
-app.get("/Chart", (req, res) => {
-  console.log("GET request from Chart.js");
+// Resolve get request for initialize chart data.
+app.get("/init", (req, res) => {
+  console.log("GET request catched for initialize chart data.");
   bodydata.find({}, (err, docs) => {
     err ? res.status(500) : res.status(200).send(docs);
   });
+});
+
+// Resolve post request for create bodydata.
+app.post("/create", (req, res) => {
+  console.log("POST request catched for create bodydata.");
+  console.log(req.body);
+  res.status(200).send();
 });
 
 // 404 error for illegal request.

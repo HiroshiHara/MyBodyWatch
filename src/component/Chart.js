@@ -110,6 +110,12 @@ export class Chart extends Component<Props, State> {
     this.renderChart();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.initData !== this.props.initData) {
+      this.renderChart();
+    }
+  }
+
   render() {
     return <div id="chart"></div>;
   }
