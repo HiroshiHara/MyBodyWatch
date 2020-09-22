@@ -8,7 +8,7 @@ type Props = {
   datetime: ?Date,
   weight: ?number,
   bmi: ?number,
-  bpf: ?number,
+  bfp: ?number,
   mm: ?number,
   isDialogOpen: boolean,
   isCreate: boolean,
@@ -26,6 +26,7 @@ export class Dialog extends Component<Props, State> {
   static defaultProps = {
     isVisible: false,
     isCreate: false,
+    onChagen: () => {},
     onCreate: () => {},
     onCancel: () => {},
   };
@@ -70,12 +71,12 @@ export class Dialog extends Component<Props, State> {
             onChange={(e) => this.props.onChange(e, "bmi")}
           ></input>
           <br />
-          <label>BPF:</label>
+          <label>BFP:</label>
           <input
             type="number"
             step="0.1"
-            name="bpf"
-            onChange={(e) => this.props.onChange(e, "bpf")}
+            name="bfp"
+            onChange={(e) => this.props.onChange(e, "bfp")}
           ></input>
           <br />
           <label>MM:</label>

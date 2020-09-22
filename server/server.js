@@ -40,7 +40,22 @@ app.get("/init", (req, res) => {
 app.post("/create", (req, res) => {
   console.log("POST request catched for create bodydata.");
   console.log(req.body);
-  res.status(200).send();
+  const { weight, bmi, bfp, mm, kcal, date } = req.body;
+  const createData = new bodydata({
+    userid: "hrhrs403",
+    weight: weight,
+    bmi: bmi,
+    bfp: bfp,
+    mm: mm,
+    kcal: kcal,
+    date: date,
+  });
+  createData.save((err) => {
+    if (err) {
+      res.status(500).send();
+    }
+    res.status(200).send();
+  });
 });
 
 // 404 error for illegal request.

@@ -4,6 +4,7 @@
 
 import React, { Component } from "react";
 import axios from "axios";
+import dateformat from "dateformat";
 import { Header } from "./Header";
 import { Chart } from "./Chart";
 import { Button } from "./Button";
@@ -16,7 +17,7 @@ type State = {
   tmpDate: string,
   tmpWeight: number,
   tmpBmi: number,
-  tmpBpf: number,
+  tmpBfp: number,
   tmpMm: number,
   tmpKcal: number,
 };
@@ -30,7 +31,7 @@ export class App extends Component<Props, State> {
       tmpDate: "",
       tmpWeight: 0,
       tmpBmi: 0,
-      tmpBpf: 0,
+      tmpBfp: 0,
       tmpMm: 0,
       tmpKcal: 0,
     };
@@ -51,7 +52,8 @@ export class App extends Component<Props, State> {
       data.bfp[i] = fetchData[i].bfp;
       data.mm[i] = fetchData[i].mm;
       data.kcal[i] = fetchData[i].kcal;
-      data.date[i] = fetchData[i].date;
+      const formatDate = dateformat(fetchData[i].date, "yyyy-mm-dd HH:MM");
+      data.date[i] = formatDate;
     }
     return data;
   }
@@ -69,7 +71,6 @@ export class App extends Component<Props, State> {
   }
 
   dialogButtonHandleClick(e: Event, action: string) {
-    console.log(e);
     if (action === "cancel") {
       this.closeDialog();
       return;
@@ -77,9 +78,10 @@ export class App extends Component<Props, State> {
     if (action === "create") {
       axios
         .post("create", {
+          weight: this.state.tmpWeight,
           date: this.state.tmpDate,
           bmi: this.state.tmpBmi,
-          bpf: this.state.tmpBpf,
+          bfp: this.state.tmpBfp,
           mm: this.state.tmpMm,
           kcal: this.state.tmpKcal,
         })
@@ -94,6 +96,11 @@ export class App extends Component<Props, State> {
   }
 
   handleChange(e: Event, item: string) {
+    if (item === "weight") {
+      this.setState({
+        tmpWeight: e.target.value,
+      });
+    }
     if (item === "date") {
       this.setState({
         tmpDate: e.target.value,
@@ -104,9 +111,9 @@ export class App extends Component<Props, State> {
         tmpBmi: e.target.value,
       });
     }
-    if (item === "bpf") {
+    if (item === "bfp") {
       this.setState({
-        tmpBpf: e.target.value,
+        tmpBfp: e.target.value,
       });
     }
     if (item === "mm") {
