@@ -15,6 +15,7 @@ export class Chart extends Component<Props, State> {
   }
 
   renderChart() {
+    const chartData = this.props.initData;
     c3.generate({
       /**
        * Rendering Chart on this id.
@@ -27,7 +28,7 @@ export class Chart extends Component<Props, State> {
       data: {
         x: "date",
         xFormat: "%Y-%m-%d %H:%M",
-        json: this.props.initData,
+        json: chartData,
         // "y2" define right y-axis for different unit.
         axes: {
           kcal: "y2",
@@ -35,6 +36,16 @@ export class Chart extends Component<Props, State> {
         // Make certain data to different look.
         types: {
           kcal: "bar",
+        },
+        onclick: function (d, i) {
+          console.log("onclick", d, i);
+          const index = d.index;
+          console.log(chartData.weight[index]);
+          console.log(chartData.bmi[index]);
+          console.log(chartData.bfp[index]);
+          console.log(chartData.mm[index]);
+          console.log(chartData.kcal[index]);
+          console.log(chartData.date[index]);
         },
       },
 
