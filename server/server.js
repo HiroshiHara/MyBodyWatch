@@ -1,38 +1,8 @@
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
-
-// Get connection of MongoDB(In case of use mongoose)
-const mongoose = require("mongoose");
-const url = "mongodb://127.0.0.1:27017/mybodywatch";
-mongoose.connect(url, { useNewUrlParser: true });
-const db = mongoose.connection;
-// define schema.
-const bodydataSchema = new mongoose.Schema(
-  {
-    userid: String,
-    weight: Number,
-    bmi: Number,
-    bfp: Number,
-    mm: Number,
-    kcal: Number,
-    date: String,
-  },
-  {
-    collection: "bodydata",
-  }
-);
-// compile to model from schema.
-const bodydata = mongoose.model("bodydata", bodydataSchema);
-
-db.once("open", () => {
-  console.log("Database connected:", url);
-  // find all document from db.
-});
-
-db.on("error", (err) => {
-  console.error("connection error:", err);
-});
+const model = require("./model");
+const bodydata = model.bodydata;
 
 // Setup to use express.
 const app = express();
@@ -41,6 +11,7 @@ const app = express();
 const target = path.resolve("../dist/");
 
 // Setup the body-parser.
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Rooting for static files
@@ -57,11 +28,33 @@ app.get("/", (req, res) => {
   res.sendFile(target + "/index.html");
 });
 
-// Resolve GET request.
-app.get("/Chart", (req, res) => {
-  console.log("GET request from Chart.js");
+// Resolve get request for initialize chart data.
+app.get("/init", (req, res) => {
+  console.log("GET request catched for initialize chart data.");
   bodydata.find({}, (err, docs) => {
     err ? res.status(500) : res.status(200).send(docs);
+  });
+});
+
+// Resolve post request for create bodydata.
+app.post("/create", (req, res) => {
+  console.log("POST request catched for create bodydata.");
+  console.log(req.body);
+  const { weight, bmi, bfp, mm, kcal, date } = req.body;
+  const createData = new bodydata({
+    userid: "hrhrs403",
+    weight: weight,
+    bmi: bmi,
+    bfp: bfp,
+    mm: mm,
+    kcal: kcal,
+    date: date,
+  });
+  createData.save((err) => {
+    if (err) {
+      res.status(500).send();
+    }
+    res.status(200).send();
   });
 });
 

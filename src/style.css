@@ -3,7 +3,9 @@ body {
   margin: 0px;
 }
 
-a {
+a,
+input[type="submit"],
+input[type="button"] {
   text-decoration: none;
   cursor: pointer;
 }
@@ -16,17 +18,13 @@ a:visited {
   color: #f0f0f0;
 }
 
-#chart {
-  /* z-index: 1; */
-  padding-top: 200px;
-  opacity: 1;
-}
-
-#chart .c3-line-weight,
-.c3-line-bmi,
-.c3-line-bfp,
-.c3-line-mm {
-  stroke-width: 5px;
+button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+  appearance: none;
 }
 
 .header-wrapper {
@@ -34,7 +32,7 @@ a:visited {
   height: 100px;
   background-color: #1f2420;
   color: #f0f0f0;
-  position: absolute;
+  position: fixed;
   z-index: 1;
   text-align: center;
 }
@@ -42,7 +40,7 @@ a:visited {
 .logo-wrapper {
   text-align: left;
   top: 30px;
-  left: 20px;
+  padding-left: 20px;
   position: relative;
   z-index: 2;
 }
@@ -74,6 +72,88 @@ a:visited {
   letter-spacing: 0.05em;
 }
 
+.button-wrapper {
+  padding-top: 120px;
+  padding-left: 30px;
+  width: 50px;
+  height: 30px;
+  text-align: center;
+}
+
+.button-wrapper button {
+  padding: 12px 30px;
+  background-color: #1f2420;
+  color: #f0f0f0;
+  font-weight: bold;
+  font-size: 18px;
+  border-radius: 20px;
+}
+
+.button-wrapper button:hover {
+  background-color: #38423a;
+}
+
+#chart {
+  padding-top: 45px;
+  opacity: 1;
+}
+
+#chart .c3-line-weight,
+.c3-line-bmi,
+.c3-line-bfp,
+.c3-line-mm {
+  stroke-width: 5px;
+}
+
+.dialog-wrapper {
+  color: #f0f0f0;
+  background-color: #1f2420;
+  border: 1px;
+  position: fixed;
+  display: flex;
+  top: 20%;
+  left: 50%;
+  z-index: 4;
+  width: 350px;
+  padding: 30px 10px 30px 30px;
+  margin-left: -175px;
+}
+
+.dialog-container label {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 17.5px;
+  width: 75px;
+}
+
+.dialog-container input {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 17.5px;
+  flex: 1;
+}
+
+.dialog-button {
+  text-align: center;
+  margin-left: 25px;
+}
+
+.dialog-button input[type="submit"],
+input[type="button"] {
+  border: 1px #f0f0f0;
+  width: 45%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-top: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
+  background-color: #48a8db;
+  border: none;
+  color: #f0f0f0;
+  font-weight: bold;
+}
+
+/*  */
 @media screen and (max-width: 900px) {
   .logo-wrapper {
     display: none;
