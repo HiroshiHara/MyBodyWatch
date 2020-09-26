@@ -61,6 +61,7 @@ module.exports = {
    */
   devServer: {
     contentBase: outputPath,
+    port: 3000,
   },
 
   /**
@@ -91,6 +92,7 @@ module.exports = {
               ],
               plugins: [
                 "@babel/plugin-syntax-jsx",
+                "@babel/transform-runtime",
                 "transform-flow-strip-types",
                 "transform-class-properties",
               ],
