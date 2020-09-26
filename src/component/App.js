@@ -70,6 +70,12 @@ export class App extends Component<Props, State> {
     });
   }
 
+  chartHandleClick() {
+    this.setState({
+      isDialogOpen: true,
+    });
+  }
+
   dialogButtonHandleClick(e: Event, action: string) {
     if (action === "cancel") {
       this.closeDialog();
