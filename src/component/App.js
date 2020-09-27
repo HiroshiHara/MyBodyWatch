@@ -14,6 +14,8 @@ type Props = {};
 type State = {
   data: Object,
   isDialogOpen: boolean,
+  isCreate: boolean,
+  tmpId: string,
   tmpDate: string,
   tmpWeight: number,
   tmpBmi: number,
@@ -22,13 +24,21 @@ type State = {
   tmpKcal: number,
 };
 
+let loginUserId = "";
+let loginUserHeight = "";
+let loginUserAge = "";
+let loginUserBirthday = "";
+const defaultDateState = dateformat("yyyy-mm-dd HH:MM");
+
 export class App extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       data: {},
       isDialogOpen: false,
-      tmpDate: "",
+      isCreate: false,
+      tmpId: "",
+      tmpDate: defaultDateState,
       tmpWeight: 0,
       tmpBmi: 0,
       tmpBfp: 0,
@@ -39,6 +49,7 @@ export class App extends Component<Props, State> {
 
   makeData(fetchData: Object) {
     const data = {
+      _id: [],
       weight: [],
       bmi: [],
       bfp: [],
@@ -47,6 +58,7 @@ export class App extends Component<Props, State> {
       date: [],
     };
     for (let i = 0; i < fetchData.length; i++) {
+      data._id[i] = fetchData[i]._id;
       data.weight[i] = fetchData[i].weight;
       data.bmi[i] = fetchData[i].bmi;
       data.bfp[i] = fetchData[i].bfp;
@@ -61,18 +73,42 @@ export class App extends Component<Props, State> {
   closeDialog() {
     this.setState({
       isDialogOpen: false,
+      isCreate: false,
+      tmpId: "",
+      tmpDate: defaultDateState,
+      tmpWeight: 0,
+      tmpBmi: 0,
+      tmpBfp: 0,
+      tmpMm: 0,
+      tmpKcal: 0,
     });
   }
 
   addButtonHandleClick() {
     this.setState({
       isDialogOpen: true,
+      isCreate: true,
     });
   }
 
-  chartHandleClick() {
+  chartHandleClick(
+    _id: string,
+    date: string,
+    weight: number,
+    bmi: number,
+    bpf: number,
+    mm: number,
+    kcal: number
+  ) {
     this.setState({
       isDialogOpen: true,
+      tmpId: _id,
+      tmpDate: date,
+      tmpWeight: weight,
+      tmpBmi: bmi,
+      tmpBfp: bpf,
+      tmpMm: mm,
+      tmpKcal: kcal,
     });
   }
 
@@ -82,8 +118,10 @@ export class App extends Component<Props, State> {
       return;
     }
     if (action === "create") {
+      console.log(this.state.tmpDate);
       axios
         .post("create", {
+          userid: loginUserId,
           weight: this.state.tmpWeight,
           date: this.state.tmpDate,
           bmi: this.state.tmpBmi,
@@ -92,11 +130,32 @@ export class App extends Component<Props, State> {
           kcal: this.state.tmpKcal,
         })
         .then(() => {
+          // this.closeDialog();
           this.reloadChart();
-          console.log("post success");
+          console.log("Success create data.");
         })
         .catch((err) => {
           console.error(err);
+        });
+    }
+    if (action === "update") {
+      axios
+        .post("update", {
+          _id: this.state.tmpId,
+          weight: this.state.tmpWeight,
+          date: this.state.tmpDate,
+          bmi: this.state.tmpBmi,
+          bfp: this.state.tmpBfp,
+          mm: this.state.tmpMm,
+          kcal: this.state.tmpKcal,
+        })
+        .then(() => {
+          this.closeDialog();
+          this.reloadChart();
+          console.log("Success update data.");
+        })
+        .catch((err) => {
+          console.log(err);
         });
     }
   }
@@ -137,7 +196,29 @@ export class App extends Component<Props, State> {
   componentDidMount() {
     let result = null;
     axios
-      .get("/init")
+      .get("/login", {
+        params: {
+          _id: "hrhrs403",
+        },
+      })
+      .then((res) => {
+        result = res.data[0];
+        loginUserId = result._id;
+        console.log(loginUserId);
+        loginUserHeight = result.height;
+        loginUserAge = result.age;
+        loginUserBirthday = result.birthday;
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    axios
+      .get("/init", {
+        params: {
+          _id: "hrhrs403",
+        },
+      })
       .then((res) => {
         result = this.makeData(res.data);
         this.setState({
@@ -159,7 +240,11 @@ export class App extends Component<Props, State> {
   reloadChart() {
     let result = null;
     axios
-      .get("/init")
+      .get("/init", {
+        params: {
+          _id: loginUserId,
+        },
+      })
       .then((res) => {
         result = this.makeData(res.data);
         this.setState({
@@ -179,14 +264,24 @@ export class App extends Component<Props, State> {
           title="ADD"
           handleClick={this.addButtonHandleClick.bind(this)}
         />
-        <Chart initData={this.state.data} />
+        <Chart
+          initData={this.state.data}
+          onClickChart={this.chartHandleClick.bind(this)}
+        />
         {this.state.isDialogOpen ? (
           <Dialog
             isDialogOpen={true}
-            isCreate={true}
+            isCreate={this.state.isCreate}
             onChange={this.handleChange.bind(this)}
             onCreate={this.dialogButtonHandleClick.bind(this)}
             onCancel={this.dialogButtonHandleClick.bind(this)}
+            _id={this.state.tmpId}
+            datetime={this.state.tmpDate}
+            weight={this.state.tmpWeight}
+            bmi={this.state.tmpBmi}
+            bfp={this.state.tmpBfp}
+            mm={this.state.tmpMm}
+            kcal={this.state.tmpKcal}
           />
         ) : null}
       </div>

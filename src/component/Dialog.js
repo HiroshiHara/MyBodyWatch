@@ -2,14 +2,17 @@
  * @flow
  */
 
+import dateformat from "dateformat";
 import React, { Component } from "react";
 
 type Props = {
+  _id: ?string,
   datetime: ?Date,
   weight: ?number,
   bmi: ?number,
   bfp: ?number,
   mm: ?number,
+  kcal: ?Number,
   isDialogOpen: boolean,
   isCreate: boolean,
   onChange: Function,
@@ -26,7 +29,7 @@ export class Dialog extends Component<Props, State> {
   static defaultProps = {
     isVisible: false,
     isCreate: false,
-    onChagen: () => {},
+    onChange: () => {},
     onCreate: () => {},
     onCancel: () => {},
   };
@@ -45,6 +48,11 @@ export class Dialog extends Component<Props, State> {
 
   render() {
     const submitTitle = this.props.isCreate ? "ADD" : "UPDATE";
+    const submitAction = this.props.isCreate ? "create" : "update";
+    const formatDatetime = dateformat(
+      this.props.datetime,
+      "yyyy-mm-dd'T'HH:MM"
+    );
     return (
       <div className="dialog-wrapper">
         <div className="dialog-container">
@@ -52,12 +60,14 @@ export class Dialog extends Component<Props, State> {
           <label>Date:</label>
           <input
             type="datetime-local"
+            value={formatDatetime}
             onChange={(e) => this.props.onChange(e, "date")}
           ></input>
           <br />
           <label>Weight:</label>
           <input
             type="number"
+            value={this.props.weight}
             step="0.1"
             name="weight"
             onChange={(e) => this.props.onChange(e, "weight")}
@@ -66,6 +76,7 @@ export class Dialog extends Component<Props, State> {
           <label>BMI:</label>
           <input
             type="number"
+            value={this.props.bmi}
             step="0.1"
             name="bmi"
             onChange={(e) => this.props.onChange(e, "bmi")}
@@ -74,6 +85,7 @@ export class Dialog extends Component<Props, State> {
           <label>BFP:</label>
           <input
             type="number"
+            value={this.props.bfp}
             step="0.1"
             name="bfp"
             onChange={(e) => this.props.onChange(e, "bfp")}
@@ -82,6 +94,7 @@ export class Dialog extends Component<Props, State> {
           <label>MM:</label>
           <input
             type="number"
+            value={this.props.mm}
             step="0.1"
             name="mm"
             onChange={(e) => this.props.onChange(e, "mm")}
@@ -90,16 +103,18 @@ export class Dialog extends Component<Props, State> {
           <label>kcal:</label>
           <input
             type="number"
+            value={this.props.kcal}
             step="1"
             name="kcal"
             onChange={(e) => this.props.onChange(e, "kcal")}
           ></input>
           <br />
+          <input type="hidden" value={this.props._id} name="_id"></input>
           <div className="dialog-button">
             <input
               type="submit"
               value={submitTitle}
-              onClick={(e) => this.props.onCreate(e, "create")}
+              onClick={(e) => this.props.onCreate(e, submitAction)}
             ></input>
             <input
               type="button"

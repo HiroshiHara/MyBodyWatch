@@ -7,6 +7,7 @@ const db = mongoose.connection;
 // define schema.
 const bodydataSchema = new mongoose.Schema(
   {
+    // _id: String,
     userid: String,
     weight: Number,
     bmi: Number,
@@ -20,6 +21,18 @@ const bodydataSchema = new mongoose.Schema(
   }
 );
 
+const userSchema = new mongoose.Schema(
+  {
+    _id: String,
+    age: Number,
+    height: Number,
+    birthday: String,
+  },
+  {
+    collection: "user",
+  }
+);
+
 db.once("open", () => {
   console.log("Database connected:", url);
 });
@@ -30,3 +43,4 @@ db.on("error", (err) => {
 
 // compile to model from schema. and export.
 exports.bodydata = mongoose.model("bodydata", bodydataSchema);
+exports.user = mongoose.model("user", userSchema);
