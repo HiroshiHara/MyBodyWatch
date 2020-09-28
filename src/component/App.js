@@ -5,6 +5,8 @@
 import React, { Component } from "react";
 import axios from "axios";
 import dateformat from "dateformat";
+import { calc } from "../util/calc";
+import { User } from "../model/User";
 import { Header } from "./Header";
 import { Chart } from "./Chart";
 import { Button } from "./Button";
@@ -24,10 +26,7 @@ type State = {
   tmpKcal: number,
 };
 
-let loginUserId = "";
-let loginUserHeight = "";
-let loginUserAge = "";
-let loginUserBirthday = "";
+let user = null;
 const defaultDateState = dateformat("yyyy-mm-dd HH:MM");
 
 export class App extends Component<Props, State> {
@@ -121,7 +120,7 @@ export class App extends Component<Props, State> {
       console.log(this.state.tmpDate);
       axios
         .post("create", {
-          userid: loginUserId,
+          userid: user._id,
           weight: this.state.tmpWeight,
           date: this.state.tmpDate,
           bmi: this.state.tmpBmi,
@@ -203,11 +202,13 @@ export class App extends Component<Props, State> {
       })
       .then((res) => {
         result = res.data[0];
-        loginUserId = result._id;
-        console.log(loginUserId);
-        loginUserHeight = result.height;
-        loginUserAge = result.age;
-        loginUserBirthday = result.birthday;
+        user = new User(
+          result._id,
+          result.height,
+          result.age,
+          result.sex,
+          result.birthday
+        );
       })
       .catch((err) => {
         console.error(err);
@@ -242,7 +243,7 @@ export class App extends Component<Props, State> {
     axios
       .get("/init", {
         params: {
-          _id: loginUserId,
+          _id: user._id,
         },
       })
       .then((res) => {
