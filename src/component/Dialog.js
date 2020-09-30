@@ -80,6 +80,7 @@ export class Dialog extends Component<Props, State> {
             step="0.1"
             name="bmi"
             onChange={(e) => this.props.onChange(e, "bmi")}
+            readOnly
           ></input>
           <br />
           <label>BFP:</label>
@@ -98,6 +99,7 @@ export class Dialog extends Component<Props, State> {
             step="0.1"
             name="mm"
             onChange={(e) => this.props.onChange(e, "mm")}
+            readOnly
           ></input>
           <br />
           <label>kcal:</label>
@@ -107,6 +109,7 @@ export class Dialog extends Component<Props, State> {
             step="1"
             name="kcal"
             onChange={(e) => this.props.onChange(e, "kcal")}
+            readOnly
           ></input>
           <br />
           <input type="hidden" value={this.props._id} name="_id"></input>

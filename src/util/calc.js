@@ -7,10 +7,10 @@
  */
 export function calcBmi(height: number, weight: number): number {
   if (height <= 0 || weight <= 0) {
-    console.error("invalid argument.");
-    return -1;
+    return 0;
   }
-  return Math.round((weight / (height * height)) * 10) / 10;
+  const heightParseMeter = height / 100;
+  return Math.round((weight / (heightParseMeter * heightParseMeter)) * 10) / 10;
 }
 
 /**
@@ -20,8 +20,7 @@ export function calcBmi(height: number, weight: number): number {
  */
 export function calcMm(weight: number, bfp: number): number {
   if (weight <= 0 || bfp <= 0) {
-    console.error("invalid argument.");
-    return -1;
+    return 0;
   }
   const bfm = weight * (bfp / 100);
   const lbm = weight - bfm;
@@ -42,20 +41,15 @@ export function calcKcal(
   age: number,
   sex: string
 ): number {
+  if (height <= 0 || weight <= 0) {
+    return 0;
+  }
   let result: number = 0;
-  if (weight <= 0 || weight <= 0 || age <= 0) {
-    console.error("invalid argument.");
-    return -1;
-  }
-  if (sex !== "male" || sex !== "female") {
-    console.error("invalid argument.");
-    return -1;
-  }
   if (sex === "male") {
-    result = 13.397 * weight + (4.799 + height) - 5.677 * age + 88.362;
+    result = 13.397 * weight + 4.799 * height - 5.677 * age + 88.362;
   }
   if (sex === "female") {
-    result = 9.247 * weight + (3.098 + height) - 4.33 * age + 447.593;
+    result = 9.247 * weight + 3.098 * height - 4.33 * age + 447.593;
   }
   return Math.round(result);
 }

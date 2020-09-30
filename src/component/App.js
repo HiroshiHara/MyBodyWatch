@@ -5,7 +5,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import dateformat from "dateformat";
-import { calc } from "../util/calc";
+import { calcBmi, calcMm, calcKcal } from "../util/calc";
 import { User } from "../model/User";
 import { Header } from "./Header";
 import { Chart } from "./Chart";
@@ -117,7 +117,7 @@ export class App extends Component<Props, State> {
       return;
     }
     if (action === "create") {
-      console.log(this.state.tmpDate);
+      // TODO: check post data!
       axios
         .post("create", {
           userid: user._id,
@@ -129,7 +129,7 @@ export class App extends Component<Props, State> {
           kcal: this.state.tmpKcal,
         })
         .then(() => {
-          // this.closeDialog();
+          this.closeDialog();
           this.reloadChart();
           console.log("Success create data.");
         })
@@ -138,6 +138,7 @@ export class App extends Component<Props, State> {
         });
     }
     if (action === "update") {
+      // TODO: check post data!
       axios
         .post("update", {
           _id: this.state.tmpId,
@@ -163,6 +164,9 @@ export class App extends Component<Props, State> {
     if (item === "weight") {
       this.setState({
         tmpWeight: e.target.value,
+        tmpBmi: calcBmi(user.height, e.target.value),
+        tmpMm: calcMm(e.target.value, this.state.tmpBfp),
+        tmpKcal: calcKcal(user.height, e.target.value, user.age, user.sex),
       });
     }
     if (item === "date") {
@@ -178,6 +182,7 @@ export class App extends Component<Props, State> {
     if (item === "bfp") {
       this.setState({
         tmpBfp: e.target.value,
+        tmpMm: calcMm(this.state.tmpWeight, e.target.value),
       });
     }
     if (item === "mm") {
@@ -214,6 +219,7 @@ export class App extends Component<Props, State> {
         console.error(err);
       });
 
+    // TODO: to be a method.-*-*-*-*-*
     axios
       .get("/init", {
         params: {
@@ -229,6 +235,7 @@ export class App extends Component<Props, State> {
       .catch((err) => {
         console.error(err);
       });
+    // TODO: to be a method.-*-*-*-*-*
 
     // When user keydown 'Esc', close Dialog.
     document.onkeydown = (e) => {
@@ -239,6 +246,7 @@ export class App extends Component<Props, State> {
   }
 
   reloadChart() {
+    // TODO: to be a method.-*-*-*-*-*
     let result = null;
     axios
       .get("/init", {
@@ -255,6 +263,7 @@ export class App extends Component<Props, State> {
       .catch((err) => {
         console.error(err);
       });
+    // TODO: to be a method.-*-*-*-*-*
   }
 
   render() {
