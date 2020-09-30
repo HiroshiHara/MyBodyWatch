@@ -6,7 +6,7 @@ import React, { Component } from "react";
 import c3 from "c3";
 import "c3/c3.css";
 
-type Props = { initData: Object };
+type Props = { initData: Object, onClickChart: Function };
 type State = {};
 
 export class Chart extends Component<Props, State> {
@@ -16,6 +16,7 @@ export class Chart extends Component<Props, State> {
 
   renderChart() {
     const chartData = this.props.initData;
+    const onClickChart = this.props.onClickChart;
     c3.generate({
       /**
        * Rendering Chart on this id.
@@ -37,15 +38,25 @@ export class Chart extends Component<Props, State> {
         types: {
           kcal: "bar",
         },
+        hide: ["_id"],
         onclick: function (d, i) {
-          console.log("onclick", d, i);
           const index = d.index;
-          console.log(chartData.weight[index]);
-          console.log(chartData.bmi[index]);
-          console.log(chartData.bfp[index]);
-          console.log(chartData.mm[index]);
-          console.log(chartData.kcal[index]);
-          console.log(chartData.date[index]);
+          const chartId = chartData._id[index];
+          const chartDate = chartData.date[index];
+          const chartWeight = chartData.weight[index];
+          const chartBmi = chartData.bmi[index];
+          const chartBfp = chartData.bfp[index];
+          const chartMm = chartData.mm[index];
+          const chartKcal = chartData.kcal[index];
+          onClickChart(
+            chartId,
+            chartDate,
+            chartWeight,
+            chartBmi,
+            chartBfp,
+            chartMm,
+            chartKcal
+          );
         },
       },
 
@@ -78,6 +89,13 @@ export class Chart extends Component<Props, State> {
       },
 
       /**
+       * Setting a tickness for legend.
+       */
+      legend: {
+        hide: ["_id"],
+      },
+
+      /**
        * Setting a tickness for bar chart.
        */
       bar: {
@@ -106,7 +124,14 @@ export class Chart extends Component<Props, State> {
        * Setting color on graphs.
        */
       color: {
-        pattern: ["#f76876", "#686af7", "#d1e03f", "#f7a668", "#afdec1"],
+        pattern: [
+          "#fff",
+          "#f76876",
+          "#686af7",
+          "#d1e03f",
+          "#f7a668",
+          "#afdec1",
+        ],
       },
 
       /**
