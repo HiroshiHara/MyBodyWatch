@@ -3,6 +3,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const model = require("./model");
 const bodydata = model.bodydata;
+const user = model.user;
 
 // Setup to use express.
 const app = express();
@@ -28,11 +29,19 @@ app.get("/", (req, res) => {
   res.sendFile(target + "/index.html");
 });
 
+app.get("/login", (req, res) => {
+  console.log("GET request catched for login.");
+  user.find({ _id: req.query._id }, (err, docs) => {
+    err ? res.status(500).send() : res.status(200).send(docs);
+  });
+});
+
 // Resolve get request for initialize chart data.
 app.get("/init", (req, res) => {
   console.log("GET request catched for initialize chart data.");
-  bodydata.find({}, (err, docs) => {
-    err ? res.status(500) : res.status(200).send(docs);
+  console.log(req.query._id);
+  bodydata.find({ userid: req.query._id }, (err, docs) => {
+    err ? res.status(500).send : res.status(200).send(docs);
   });
 });
 
@@ -40,9 +49,9 @@ app.get("/init", (req, res) => {
 app.post("/create", (req, res) => {
   console.log("POST request catched for create bodydata.");
   console.log(req.body);
-  const { weight, bmi, bfp, mm, kcal, date } = req.body;
+  const { userid, weight, bmi, bfp, mm, kcal, date } = req.body;
   const createData = new bodydata({
-    userid: "hrhrs403",
+    userid: userid,
     weight: weight,
     bmi: bmi,
     bfp: bfp,
@@ -52,10 +61,29 @@ app.post("/create", (req, res) => {
   });
   createData.save((err) => {
     if (err) {
+      console.log(err);
       res.status(500).send();
     }
     res.status(200).send();
   });
+});
+
+// Resolve post request for update bodydata.
+app.post("/update", (req, res) => {
+  console.log("POST request catched for update bodydata.");
+  console.log(req.body);
+  const { _id, userid, weight, bmi, bfp, mm, kcal, date } = req.body;
+  bodydata.updateOne(
+    { _id: _id },
+    { $set: { weight: weight, bmi: bmi, bfp: bfp, mm: mm, kcal: kcal } },
+    (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send();
+      }
+      res.status(200).send();
+    }
+  );
 });
 
 // 404 error for illegal request.
