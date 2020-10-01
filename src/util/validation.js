@@ -2,50 +2,54 @@
  * @flow
  */
 
-export function checkCreateData(states: Object): boolean {
-  if (!states.userid || !states.date) {
+export function checkCreateData(userid: string, states: Object): boolean {
+  if (!userid || !states.tmpDate) {
     return false;
   }
   if (
-    isNaN(states.weight) ||
-    isNaN(states.bmi) ||
-    isNaN(states.bfp) ||
-    isNaN(states.mm) ||
-    isNaN(states.kcal)
+    isNaN(states.tmpWeight) ||
+    isNaN(states.tmpBmi) ||
+    isNaN(states.tmpBfp) ||
+    isNaN(states.tmpMm) ||
+    isNaN(states.tmpKcal)
   ) {
     return false;
   }
   if (
-    states.weight <= 0 ||
-    states.bmi <= 0 ||
-    states.bfp <= 0 ||
-    states.mm <= 0 ||
-    states.kcal <= 0
+    states.tmpWeight <= 0 ||
+    states.tmpBmi <= 0 ||
+    states.tmpBfp <= 0 ||
+    states.tmpMm <= 0 ||
+    states.tmpKcal <= 0
   ) {
     return false;
   }
   return true;
 }
 
+function checkDuplicateData(date: string) {
+  return true;
+}
+
 export function checkUpdateData(states: Object): boolean {
-  if (!states._id || !states.date) {
+  if (!states.tmpId || !states.tmpDate) {
     return false;
   }
   if (
-    isNaN(states.weight) ||
-    isNaN(states.bmi) ||
-    isNaN(states.bfp) ||
-    isNaN(states.mm) ||
-    isNaN(states.kcal)
+    isNaN(states.tmpWeight) ||
+    isNaN(states.tmpBmi) ||
+    isNaN(states.tmpBfp) ||
+    isNaN(states.tmpMm) ||
+    isNaN(states.tmpKcal)
   ) {
     return false;
   }
   if (
-    states.weight <= 0 ||
-    states.bmi <= 0 ||
-    states.bfp <= 0 ||
-    states.mm <= 0 ||
-    states.kcal <= 0
+    states.tmpWeight <= 0 ||
+    states.tmpBmi <= 0 ||
+    states.tmpBfp <= 0 ||
+    states.tmpMm <= 0 ||
+    states.tmpKcal <= 0
   ) {
     return false;
   }

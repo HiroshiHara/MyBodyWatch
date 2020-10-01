@@ -100,6 +100,7 @@ export class App extends Component<Props, State> {
     mm: number,
     kcal: number
   ) {
+    console.log(arguments);
     this.setState({
       isDialogOpen: true,
       tmpId: _id,
@@ -110,6 +111,7 @@ export class App extends Component<Props, State> {
       tmpMm: mm,
       tmpKcal: kcal,
     });
+    console.log(this.state);
   }
 
   dialogButtonHandleClick(e: Event, action: string) {
@@ -118,7 +120,7 @@ export class App extends Component<Props, State> {
       return;
     }
     if (action === "create") {
-      if (!checkCreateData(this.state)) {
+      if (!checkCreateData(user._id, this.state)) {
         window.alert("Submit data is invalid.");
         return;
       }

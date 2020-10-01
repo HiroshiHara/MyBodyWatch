@@ -40,9 +40,14 @@ app.get("/login", (req, res) => {
 app.get("/init", (req, res) => {
   console.log("GET request catched for initialize chart data.");
   console.log(req.query._id);
-  bodydata.find({ userid: req.query._id }, (err, docs) => {
-    err ? res.status(500).send : res.status(200).send(docs);
-  });
+  bodydata.find(
+    { userid: req.query._id },
+    null,
+    { sort: { date: 1 } },
+    (err, docs) => {
+      err ? res.status(500).send : res.status(200).send(docs);
+    }
+  );
 });
 
 // Resolve post request for create bodydata.
