@@ -36,13 +36,15 @@ export class Dialog extends Component<Props, State> {
 
   // When Dialog was closed, remove gray style.
   componentWillUnmount() {
-    document.body ? document.body.classList.remove("dialogModalOpen") : null;
+    const overlayDivElem = document.getElementById("dialog-overlay");
+    overlayDivElem.removeAttribute("class", "dialog-overlay");
   }
 
   // When open Dialog on modal, add gray style to body.
   componentDidMount() {
     if (this.props.isDialogOpen) {
-      document.body ? document.body.classList.add("dialogModalOpen") : null;
+      const overlayDivElem = document.getElementById("dialog-overlay");
+      overlayDivElem.setAttribute("class", "dialog-overlay");
     }
   }
 

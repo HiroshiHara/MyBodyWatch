@@ -3,6 +3,17 @@ body {
   margin: 0px;
 }
 
+.dialog-overlay {
+  background-color: grey;
+  opacity: 0.5;
+  height: 120%;
+  width: 100%;
+  position: fixed;
+  top: 100px;
+  left: 0;
+  z-index: 2;
+}
+
 a,
 input[type="submit"],
 input[type="button"] {
