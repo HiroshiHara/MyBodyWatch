@@ -27,10 +27,6 @@ export function checkCreateData(userid: string, states: Object): boolean {
   return true;
 }
 
-function checkDuplicateData(date: string) {
-  return true;
-}
-
 export function checkUpdateData(states: Object): boolean {
   if (!states.tmpId || !states.tmpDate) {
     return false;

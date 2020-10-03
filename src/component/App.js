@@ -140,6 +140,7 @@ export class App extends Component<Props, State> {
           console.log("Success create data.");
         })
         .catch((err) => {
+          window.alert("The date is duplicated with existing data.");
           console.error(err);
         });
     }
@@ -164,6 +165,7 @@ export class App extends Component<Props, State> {
           console.log("Success update data.");
         })
         .catch((err) => {
+          window.alert("The date is duplicated with existing data.");
           console.log(err);
         });
     }
