@@ -55,8 +55,8 @@ app.get("/init", (req, res) => {
 app.post("/create", (req, res) => {
   console.log("POST request catched for create bodydata.");
   const { userid, weight, bmi, bfp, mm, kcal, date } = req.body;
-  try {
-    checkDuplicate(date, res).then(() => {
+  countDocsByDate(date).then((result) => {
+    if (result === 0) {
       const createData = new bodydata({
         userid: userid,
         weight: weight,
@@ -73,20 +73,16 @@ app.post("/create", (req, res) => {
         }
         res.status(200).send();
       });
-    });
-  } catch (e) {
-    res.status(500).send();
-  }
+    } else {
+      res.status(200).send({ errcd: 1 });
+    }
+  });
 });
 
 // Resolve post request for update bodydata.
 app.post("/update", (req, res) => {
   console.log("POST request catched for update bodydata.");
-  console.log(req.body);
   const { _id, userid, weight, bmi, bfp, mm, kcal, date } = req.body;
-  if (!checkDuplicate(date, res)) {
-    return;
-  }
   bodydata.updateOne(
     { _id: _id },
     {
@@ -114,19 +110,14 @@ app.use((req, res) => {
   res.sendStatus(404);
 });
 
-async function checkDuplicate(date, res) {
+async function countDocsByDate(date) {
   const query = dateformat(date, "yyyy-mm-dd");
-  await bodydata.find(
+  const result = await bodydata.count(
     { date: new RegExp(".*" + query + ".*") },
-    (err, docs) => {
-      if (err) {
-        // throw new Error("Internal server error.");
-        throw "Internal server error.";
-      }
-      if (docs.length > 0) {
-        // throw new Error("The date is duplicated with existing data.");
-        throw "The date is duplicated with existing data.";
-      }
+    (err, count) => {
+      if (err) throw new Error("Count docs error.");
+      console.log(`duplicate date docs are ${count} founds.`);
     }
   );
+  return result;
 }

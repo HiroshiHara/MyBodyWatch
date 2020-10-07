@@ -134,21 +134,19 @@ export class App extends Component<Props, State> {
           mm: this.state.tmpMm,
           kcal: this.state.tmpKcal,
         })
-        .then(() => {
+        .then((res) => {
+          if (res.data.errcd === 1) {
+            window.alert("The date is duplicated with existing date.");
+          }
           this.closeDialog();
           this.loadChart();
           console.log("Success create data.");
         })
         .catch((err) => {
-          window.alert("The date is duplicated with existing data.");
           console.error(err);
         });
     }
     if (action === "update") {
-      if (!checkUpdateData(this.state)) {
-        window.alert("Submit data is invalid.");
-        return;
-      }
       axios
         .post("update", {
           _id: this.state.tmpId,
@@ -159,19 +157,18 @@ export class App extends Component<Props, State> {
           mm: this.state.tmpMm,
           kcal: this.state.tmpKcal,
         })
-        .then(() => {
+        .then((res) => {
           this.closeDialog();
           this.loadChart();
           console.log("Success update data.");
         })
         .catch((err) => {
-          window.alert("The date is duplicated with existing data.");
           console.log(err);
         });
     }
   }
 
-  handleChange(e: Event, item: string) {
+  handleChange(e: Event<HTMLInputElement>, item: string) {
     if (item === "weight") {
       this.setState({
         tmpWeight: e.target.value,

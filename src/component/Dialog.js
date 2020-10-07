@@ -7,12 +7,12 @@ import React, { Component } from "react";
 
 type Props = {
   _id: ?string,
-  datetime: ?Date,
+  datetime: ?string,
   weight: ?number,
   bmi: ?number,
   bfp: ?number,
   mm: ?number,
-  kcal: ?Number,
+  kcal: ?number,
   isDialogOpen: boolean,
   isCreate: boolean,
   onChange: Function,
@@ -64,6 +64,7 @@ export class Dialog extends Component<Props, State> {
             type="datetime-local"
             value={formatDatetime}
             onChange={(e) => this.props.onChange(e, "date")}
+            readOnly={!this.props.isCreate}
           ></input>
           <br />
           <label>Weight:</label>
