@@ -12,6 +12,8 @@ import { Header } from "./Header";
 import { Chart } from "./Chart";
 import { Button } from "./Button";
 import { Dialog } from "./Dialog";
+import { Selector } from "./Selector";
+import { Dashboard } from "./Dashboard";
 
 type Props = {};
 type State = {
@@ -272,6 +274,8 @@ export class App extends Component<Props, State> {
             title="ADD"
             handleClick={this.addButtonHandleClick.bind(this)}
           />
+          {/* <Selector /> */}
+          {/* <Dashboard /> */}
           <Chart
             initData={this.state.data}
             onClickChart={this.chartHandleClick.bind(this)}
