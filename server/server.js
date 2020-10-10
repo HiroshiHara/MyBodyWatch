@@ -40,9 +40,9 @@ app.get("/login", (req, res) => {
 // Resolve get request for initialize chart data.
 app.get("/init", (req, res) => {
   console.log("GET request catched for initialize chart data.");
-  console.log(req.query._id);
+  console.log(req.query.date);
   bodydata.find(
-    { userid: req.query._id },
+    { userid: req.query._id, date: new RegExp(".*" + req.query.date + ".*") },
     null,
     { sort: { date: 1 } },
     (err, docs) => {

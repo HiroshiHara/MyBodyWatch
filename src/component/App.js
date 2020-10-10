@@ -142,7 +142,7 @@ export class App extends Component<Props, State> {
             window.alert("The date is duplicated with existing date.");
           }
           this.closeDialog();
-          this.loadChart();
+          this.loadChart(this.state.currentYearMonth);
           console.log("Success create data.");
         })
         .catch((err) => {
@@ -166,7 +166,7 @@ export class App extends Component<Props, State> {
         })
         .then((res) => {
           this.closeDialog();
-          this.loadChart();
+          this.loadChart(this.state.currentYearMonth);
           console.log("Success update data.");
         })
         .catch((err) => {
@@ -212,6 +212,27 @@ export class App extends Component<Props, State> {
     }
   }
 
+  onClickAngleHandler(direction: number) {
+    const current = new Date(this.state.currentYearMonth);
+    if (direction === -1) {
+      current.setMonth(current.getMonth() - 1);
+      const previous = dateformat(current, "yyyy-mm");
+      this.setState({
+        currentYearMonth: previous,
+      });
+      this.loadChart(previous);
+      return;
+    }
+    if (direction === 1) {
+      current.setMonth(current.getMonth() + 1);
+      const next = dateformat(current, "yyyy-mm");
+      this.setState({
+        currentYearMonth: next,
+      });
+      this.loadChart(next);
+    }
+  }
+
   componentDidMount() {
     let result = null;
     axios
@@ -229,7 +250,7 @@ export class App extends Component<Props, State> {
           result.sex,
           result.birthday
         );
-        this.loadChart();
+        this.loadChart(defaultCurrentYM);
       })
       .catch((err) => {
         console.error(err);
@@ -250,12 +271,32 @@ export class App extends Component<Props, State> {
     });
   }
 
-  loadChart() {
+  // loadChart() {
+  //   let result = null;
+  //   axios
+  //     .get("/init", {
+  //       params: {
+  //         _id: user._id,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       result = this.makeData(res.data);
+  //       this.setState({
+  //         data: result,
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //     });
+  // }
+
+  loadChart(yearMonth: string) {
     let result = null;
     axios
       .get("/init", {
         params: {
           _id: user._id,
+          date: yearMonth,
         },
       })
       .then((res) => {
@@ -282,7 +323,7 @@ export class App extends Component<Props, State> {
           <Chart
             initData={this.state.data}
             onClickChart={this.chartHandleClick.bind(this)}
-            onClickAngleHandler={() => alert("test")}
+            onClickAngleHandler={this.onClickAngleHandler.bind(this)}
           />
           {this.state.isDialogOpen ? (
             <Dialog

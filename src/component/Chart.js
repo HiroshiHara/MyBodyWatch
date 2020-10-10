@@ -176,18 +176,20 @@ export class Chart extends Component<Props, State> {
     return (
       <div className="chart-wrapper">
         <div className="chart-container">
-          <span
-            className="previous-button"
-            onClick={this.props.onClickAngleHandler}
-          >
-            <FontAwesomeIcon icon={faAngleDoubleLeft} />
+          <span>
+            <FontAwesomeIcon
+              icon={faAngleDoubleLeft}
+              className="previous-button"
+              onClick={() => this.props.onClickAngleHandler(-1)}
+            />
           </span>
           <div id="chart" className="chart"></div>
-          <span
-            className="next-button"
-            onClick={this.props.onClickAngleHandler}
-          >
-            <FontAwesomeIcon icon={faAngleDoubleRight} />
+          <span>
+            <FontAwesomeIcon
+              icon={faAngleDoubleRight}
+              className="next-button"
+              onClick={() => this.props.onClickAngleHandler(1)}
+            />
           </span>
         </div>
       </div>

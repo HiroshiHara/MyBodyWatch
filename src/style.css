@@ -152,8 +152,13 @@ button {
   font-size: 4em;
 }
 
+.previous-button:hover,
+.next-button:hover {
+  color: #38423a;
+}
+
 .previous-button {
-  margin-right: 20px;
+  margin-right: 40px;
 }
 
 .next-button {
