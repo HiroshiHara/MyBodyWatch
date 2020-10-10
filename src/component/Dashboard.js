@@ -6,7 +6,7 @@ import React, { Component } from "react";
 import { Button } from "./Button";
 import { Selector } from "./Selector";
 
-type Props = {};
+type Props = { addButtonHandler: Function };
 
 type State = {};
 
@@ -19,7 +19,10 @@ export class Dashboard extends Component<Props, State> {
     return (
       <div className="dashboard-wrapper">
         <div className="dashboard-container">
-          <Button />
+          <Button
+            title="ADD"
+            handleClick={this.props.addButtonHandler.bind(this)}
+          />
           <Selector />
         </div>
       </div>

@@ -1,6 +1,7 @@
 body {
   padding: 0px;
   margin: 0px;
+  background-color: #dee2e3;
 }
 
 .dialog-overlay {
@@ -88,7 +89,7 @@ button {
 }
 
 .dashboard-wrapper {
-  padding-top: 120px;
+  padding-top: 100px;
 }
 
 .dashboard-container {
@@ -97,6 +98,8 @@ button {
 
 .button-wrapper {
   display: inline-block;
+  margin-top: 135px;
+  margin-left: 30px;
   height: 50px;
 }
 
@@ -113,23 +116,48 @@ button {
   background-color: #38423a;
 }
 
-.selector-wrapper {
-  height: 50px;
-  font-size: 38px;
-  display: inline-block;
-  text-align: center;
+.chart-wrapper {
+  width: 100%;
 }
 
-#chart {
-  padding-top: 45px;
+.chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart {
+  background-color: #fafeff;
+  margin-top: 35px;
+  padding: 25px 45px 25px 10px;
+  width: 75%;
   opacity: 1;
+  box-shadow: 0px 8px 16px -2px rgba(10, 10, 10, 0.1),
+    21px 11px 9px 11px rgba(90, 49, 49, 0.02),
+    7px 6px 3px -2px rgba(85, 161, 183, 0.9);
 }
 
-#chart .c3-line-weight,
+.chart .c3-line-weight,
 .c3-line-bmi,
 .c3-line-bfp,
 .c3-line-mm {
   stroke-width: 5px;
+}
+
+.previous-button,
+.next-button {
+  cursor: pointer;
+  display: inline-block;
+  width: 6%;
+  font-size: 4em;
+}
+
+.previous-button {
+  margin-right: 20px;
+}
+
+.next-button {
+  margin-left: 40px;
 }
 
 .dialog-wrapper {

@@ -3,10 +3,19 @@
  */
 
 import React, { Component } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faAngleDoubleLeft,
+  faAngleDoubleRight,
+} from "@fortawesome/free-solid-svg-icons";
 import c3 from "c3";
 import "c3/c3.css";
 
-type Props = { initData: Object, onClickChart: Function };
+type Props = {
+  initData: Object,
+  onClickChart: Function,
+  onClickAngleHandler: Function,
+};
 type State = {};
 
 export class Chart extends Component<Props, State> {
@@ -163,6 +172,25 @@ export class Chart extends Component<Props, State> {
   }
 
   render() {
-    return <div id="chart"></div>;
+    // return <div id="chart"></div>;
+    return (
+      <div className="chart-wrapper">
+        <div className="chart-container">
+          <span
+            className="previous-button"
+            onClick={this.props.onClickAngleHandler}
+          >
+            <FontAwesomeIcon icon={faAngleDoubleLeft} />
+          </span>
+          <div id="chart" className="chart"></div>
+          <span
+            className="next-button"
+            onClick={this.props.onClickAngleHandler}
+          >
+            <FontAwesomeIcon icon={faAngleDoubleRight} />
+          </span>
+        </div>
+      </div>
+    );
   }
 }

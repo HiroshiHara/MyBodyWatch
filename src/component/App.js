@@ -12,8 +12,6 @@ import { Header } from "./Header";
 import { Chart } from "./Chart";
 import { Button } from "./Button";
 import { Dialog } from "./Dialog";
-import { Selector } from "./Selector";
-import { Dashboard } from "./Dashboard";
 
 type Props = {};
 type State = {
@@ -27,10 +25,12 @@ type State = {
   tmpBfp: number,
   tmpMm: number,
   tmpKcal: number,
+  currentYearMonth: string,
 };
 
 let user = null;
 const defaultDateState = dateformat("yyyy-mm-dd HH:MM");
+const defaultCurrentYM = defaultDateState.slice(0, 7);
 
 export class App extends Component<Props, State> {
   constructor(props: Props) {
@@ -46,6 +46,7 @@ export class App extends Component<Props, State> {
       tmpBfp: 0,
       tmpMm: 0,
       tmpKcal: 0,
+      currentYearMonth: defaultCurrentYM,
     };
   }
 
@@ -149,6 +150,10 @@ export class App extends Component<Props, State> {
         });
     }
     if (action === "update") {
+      if (!checkUpdateData(user._id, this.state)) {
+        window.alert("Submit data is invalid.");
+        return;
+      }
       axios
         .post("update", {
           _id: this.state.tmpId,
@@ -274,11 +279,10 @@ export class App extends Component<Props, State> {
             title="ADD"
             handleClick={this.addButtonHandleClick.bind(this)}
           />
-          {/* <Selector /> */}
-          {/* <Dashboard /> */}
           <Chart
             initData={this.state.data}
             onClickChart={this.chartHandleClick.bind(this)}
+            onClickAngleHandler={() => alert("test")}
           />
           {this.state.isDialogOpen ? (
             <Dialog
