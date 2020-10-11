@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const model = require("./model");
+const dateformat = require("dateformat");
 const bodydata = model.bodydata;
 const user = model.user;
 
@@ -39,43 +40,61 @@ app.get("/login", (req, res) => {
 // Resolve get request for initialize chart data.
 app.get("/init", (req, res) => {
   console.log("GET request catched for initialize chart data.");
-  console.log(req.query._id);
-  bodydata.find({ userid: req.query._id }, (err, docs) => {
-    err ? res.status(500).send : res.status(200).send(docs);
-  });
+  console.log(req.query.date);
+  bodydata.find(
+    { userid: req.query._id, date: new RegExp(".*" + req.query.date + ".*") },
+    null,
+    { sort: { date: 1 } },
+    (err, docs) => {
+      err ? res.status(500).send : res.status(200).send(docs);
+    }
+  );
 });
 
 // Resolve post request for create bodydata.
 app.post("/create", (req, res) => {
   console.log("POST request catched for create bodydata.");
-  console.log(req.body);
   const { userid, weight, bmi, bfp, mm, kcal, date } = req.body;
-  const createData = new bodydata({
-    userid: userid,
-    weight: weight,
-    bmi: bmi,
-    bfp: bfp,
-    mm: mm,
-    kcal: kcal,
-    date: date,
-  });
-  createData.save((err) => {
-    if (err) {
-      console.log(err);
-      res.status(500).send();
+  countDocsByDate(date).then((result) => {
+    if (result === 0) {
+      const createData = new bodydata({
+        userid: userid,
+        weight: weight,
+        bmi: bmi,
+        bfp: bfp,
+        mm: mm,
+        kcal: kcal,
+        date: date,
+      });
+      createData.save((err) => {
+        if (err) {
+          console.log(err);
+          res.status(500).send();
+        }
+        res.status(200).send();
+      });
+    } else {
+      res.status(200).send({ errcd: 1 });
     }
-    res.status(200).send();
   });
 });
 
 // Resolve post request for update bodydata.
 app.post("/update", (req, res) => {
   console.log("POST request catched for update bodydata.");
-  console.log(req.body);
   const { _id, userid, weight, bmi, bfp, mm, kcal, date } = req.body;
   bodydata.updateOne(
     { _id: _id },
-    { $set: { weight: weight, bmi: bmi, bfp: bfp, mm: mm, kcal: kcal } },
+    {
+      $set: {
+        date: date,
+        weight: weight,
+        bmi: bmi,
+        bfp: bfp,
+        mm: mm,
+        kcal: kcal,
+      },
+    },
     (err) => {
       if (err) {
         console.log(err);
@@ -90,3 +109,15 @@ app.post("/update", (req, res) => {
 app.use((req, res) => {
   res.sendStatus(404);
 });
+
+async function countDocsByDate(date) {
+  const query = dateformat(date, "yyyy-mm-dd");
+  const result = await bodydata.count(
+    { date: new RegExp(".*" + query + ".*") },
+    (err, count) => {
+      if (err) throw new Error("Count docs error.");
+      console.log(`duplicate date docs are ${count} founds.`);
+    }
+  );
+  return result;
+}

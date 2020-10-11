@@ -6,6 +6,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import dateformat from "dateformat";
 import { calcBmi, calcMm, calcKcal } from "../util/calc";
+import { checkCreateData, checkUpdateData } from "../util/validation";
 import { User } from "../model/User";
 import { Header } from "./Header";
 import { Chart } from "./Chart";
@@ -24,10 +25,12 @@ type State = {
   tmpBfp: number,
   tmpMm: number,
   tmpKcal: number,
+  currentYearMonth: string,
 };
 
 let user = null;
 const defaultDateState = dateformat("yyyy-mm-dd HH:MM");
+const defaultCurrentYM = defaultDateState.slice(0, 7);
 
 export class App extends Component<Props, State> {
   constructor(props: Props) {
@@ -43,6 +46,7 @@ export class App extends Component<Props, State> {
       tmpBfp: 0,
       tmpMm: 0,
       tmpKcal: 0,
+      currentYearMonth: defaultCurrentYM,
     };
   }
 
@@ -99,6 +103,7 @@ export class App extends Component<Props, State> {
     mm: number,
     kcal: number
   ) {
+    console.log(arguments);
     this.setState({
       isDialogOpen: true,
       tmpId: _id,
@@ -109,6 +114,7 @@ export class App extends Component<Props, State> {
       tmpMm: mm,
       tmpKcal: kcal,
     });
+    console.log(this.state);
   }
 
   dialogButtonHandleClick(e: Event, action: string) {
@@ -117,7 +123,10 @@ export class App extends Component<Props, State> {
       return;
     }
     if (action === "create") {
-      // TODO: check post data!
+      if (!checkCreateData(user._id, this.state)) {
+        window.alert("Submit data is invalid.");
+        return;
+      }
       axios
         .post("create", {
           userid: user._id,
@@ -128,9 +137,12 @@ export class App extends Component<Props, State> {
           mm: this.state.tmpMm,
           kcal: this.state.tmpKcal,
         })
-        .then(() => {
+        .then((res) => {
+          if (res.data.errcd === 1) {
+            window.alert("The date is duplicated with existing date.");
+          }
           this.closeDialog();
-          this.reloadChart();
+          this.loadChart(this.state.currentYearMonth);
           console.log("Success create data.");
         })
         .catch((err) => {
@@ -138,7 +150,10 @@ export class App extends Component<Props, State> {
         });
     }
     if (action === "update") {
-      // TODO: check post data!
+      if (!checkUpdateData(user._id, this.state)) {
+        window.alert("Submit data is invalid.");
+        return;
+      }
       axios
         .post("update", {
           _id: this.state.tmpId,
@@ -149,9 +164,9 @@ export class App extends Component<Props, State> {
           mm: this.state.tmpMm,
           kcal: this.state.tmpKcal,
         })
-        .then(() => {
+        .then((res) => {
           this.closeDialog();
-          this.reloadChart();
+          this.loadChart(this.state.currentYearMonth);
           console.log("Success update data.");
         })
         .catch((err) => {
@@ -160,7 +175,7 @@ export class App extends Component<Props, State> {
     }
   }
 
-  handleChange(e: Event, item: string) {
+  handleChange(e: Event<HTMLInputElement>, item: string) {
     if (item === "weight") {
       this.setState({
         tmpWeight: e.target.value,
@@ -197,6 +212,27 @@ export class App extends Component<Props, State> {
     }
   }
 
+  onClickAngleHandler(direction: number) {
+    const current = new Date(this.state.currentYearMonth);
+    if (direction === -1) {
+      current.setMonth(current.getMonth() - 1);
+      const previous = dateformat(current, "yyyy-mm");
+      this.setState({
+        currentYearMonth: previous,
+      });
+      this.loadChart(previous);
+      return;
+    }
+    if (direction === 1) {
+      current.setMonth(current.getMonth() + 1);
+      const next = dateformat(current, "yyyy-mm");
+      this.setState({
+        currentYearMonth: next,
+      });
+      this.loadChart(next);
+    }
+  }
+
   componentDidMount() {
     let result = null;
     axios
@@ -214,28 +250,11 @@ export class App extends Component<Props, State> {
           result.sex,
           result.birthday
         );
+        this.loadChart(defaultCurrentYM);
       })
       .catch((err) => {
         console.error(err);
       });
-
-    // TODO: to be a method.-*-*-*-*-*
-    axios
-      .get("/init", {
-        params: {
-          _id: "hrhrs403",
-        },
-      })
-      .then((res) => {
-        result = this.makeData(res.data);
-        this.setState({
-          data: result,
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-    // TODO: to be a method.-*-*-*-*-*
 
     // When user keydown 'Esc', close Dialog.
     document.onkeydown = (e) => {
@@ -243,15 +262,41 @@ export class App extends Component<Props, State> {
         this.closeDialog();
       }
     };
+
+    // When user click outside Dialog, close Dialog.
+    const overlayDivElem = document.getElementById("dialog-overlay");
+    overlayDivElem.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.closeDialog();
+    });
   }
 
-  reloadChart() {
-    // TODO: to be a method.-*-*-*-*-*
+  // loadChart() {
+  //   let result = null;
+  //   axios
+  //     .get("/init", {
+  //       params: {
+  //         _id: user._id,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       result = this.makeData(res.data);
+  //       this.setState({
+  //         data: result,
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //     });
+  // }
+
+  loadChart(yearMonth: string) {
     let result = null;
     axios
       .get("/init", {
         params: {
           _id: user._id,
+          date: yearMonth,
         },
       })
       .then((res) => {
@@ -263,37 +308,42 @@ export class App extends Component<Props, State> {
       .catch((err) => {
         console.error(err);
       });
-    // TODO: to be a method.-*-*-*-*-*
   }
 
   render() {
     return (
-      <div className="main-wrapper">
+      <div className="wrapper">
         <Header />
-        <Button
-          title="ADD"
-          handleClick={this.addButtonHandleClick.bind(this)}
-        />
-        <Chart
-          initData={this.state.data}
-          onClickChart={this.chartHandleClick.bind(this)}
-        />
-        {this.state.isDialogOpen ? (
-          <Dialog
-            isDialogOpen={true}
-            isCreate={this.state.isCreate}
-            onChange={this.handleChange.bind(this)}
-            onCreate={this.dialogButtonHandleClick.bind(this)}
-            onCancel={this.dialogButtonHandleClick.bind(this)}
-            _id={this.state.tmpId}
-            datetime={this.state.tmpDate}
-            weight={this.state.tmpWeight}
-            bmi={this.state.tmpBmi}
-            bfp={this.state.tmpBfp}
-            mm={this.state.tmpMm}
-            kcal={this.state.tmpKcal}
+        <div className="header-space"></div>
+        <div id="dialog-overlay"></div>
+        <div className="main-wrapper">
+          <Button
+            title="ADD"
+            handleClick={this.addButtonHandleClick.bind(this)}
           />
-        ) : null}
+          <Chart
+            initData={this.state.data}
+            currentYearMonth={this.state.currentYearMonth}
+            onClickChart={this.chartHandleClick.bind(this)}
+            onClickAngleHandler={this.onClickAngleHandler.bind(this)}
+          />
+          {this.state.isDialogOpen ? (
+            <Dialog
+              isDialogOpen={true}
+              isCreate={this.state.isCreate}
+              onChange={this.handleChange.bind(this)}
+              onCreate={this.dialogButtonHandleClick.bind(this)}
+              onCancel={this.dialogButtonHandleClick.bind(this)}
+              _id={this.state.tmpId}
+              datetime={this.state.tmpDate}
+              weight={this.state.tmpWeight}
+              bmi={this.state.tmpBmi}
+              bfp={this.state.tmpBfp}
+              mm={this.state.tmpMm}
+              kcal={this.state.tmpKcal}
+            />
+          ) : null}
+        </div>
       </div>
     );
   }
