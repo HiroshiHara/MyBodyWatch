@@ -314,6 +314,7 @@ export class App extends Component<Props, State> {
     return (
       <div className="wrapper">
         <Header />
+        <div className="header-space"></div>
         <div id="dialog-overlay"></div>
         <div className="main-wrapper">
           <Button
@@ -322,6 +323,7 @@ export class App extends Component<Props, State> {
           />
           <Chart
             initData={this.state.data}
+            currentYearMonth={this.state.currentYearMonth}
             onClickChart={this.chartHandleClick.bind(this)}
             onClickAngleHandler={this.onClickAngleHandler.bind(this)}
           />

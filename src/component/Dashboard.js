@@ -4,7 +4,6 @@
 
 import React, { Component } from "react";
 import { Button } from "./Button";
-import { Selector } from "./Selector";
 
 type Props = { addButtonHandler: Function };
 
@@ -23,7 +22,6 @@ export class Dashboard extends Component<Props, State> {
             title="ADD"
             handleClick={this.props.addButtonHandler.bind(this)}
           />
-          <Selector />
         </div>
       </div>
     );

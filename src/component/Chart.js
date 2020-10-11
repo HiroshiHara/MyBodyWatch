@@ -13,6 +13,7 @@ import "c3/c3.css";
 
 type Props = {
   initData: Object,
+  currentYearMonth: string,
   onClickChart: Function,
   onClickAngleHandler: Function,
 };
@@ -33,6 +34,13 @@ export class Chart extends Component<Props, State> {
       bindto: "#chart",
 
       /**
+       * Chart title.
+       */
+      title: {
+        text: this.props.currentYearMonth,
+      },
+
+      /**
        * Setting Data for the Chart.
        */
       data: {
@@ -49,8 +57,6 @@ export class Chart extends Component<Props, State> {
         },
         hide: ["_id"],
         onclick: function (d, i) {
-          console.log(d);
-          console.log(chartData);
           const index = d.index;
           const chartId = chartData._id[index];
           const chartDate = chartData.date[index];
@@ -59,13 +65,6 @@ export class Chart extends Component<Props, State> {
           const chartBfp = chartData.bfp[index];
           const chartMm = chartData.mm[index];
           const chartKcal = chartData.kcal[index];
-          console.log(chartId);
-          console.log(chartDate);
-          console.log(chartWeight);
-          console.log(chartBmi);
-          console.log(chartBfp);
-          console.log(chartMm);
-          console.log(chartKcal);
           onClickChart(
             chartId,
             chartDate,
@@ -172,7 +171,6 @@ export class Chart extends Component<Props, State> {
   }
 
   render() {
-    // return <div id="chart"></div>;
     return (
       <div className="chart-wrapper">
         <div className="chart-container">
