@@ -3,10 +3,20 @@
  */
 
 import React, { Component } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faAngleDoubleLeft,
+  faAngleDoubleRight,
+} from "@fortawesome/free-solid-svg-icons";
 import c3 from "c3";
 import "c3/c3.css";
 
-type Props = { initData: Object, onClickChart: Function };
+type Props = {
+  initData: Object,
+  currentYearMonth: string,
+  onClickChart: Function,
+  onClickAngleHandler: Function,
+};
 type State = {};
 
 export class Chart extends Component<Props, State> {
@@ -22,6 +32,13 @@ export class Chart extends Component<Props, State> {
        * Rendering Chart on this id.
        */
       bindto: "#chart",
+
+      /**
+       * Chart title.
+       */
+      title: {
+        text: this.props.currentYearMonth,
+      },
 
       /**
        * Setting Data for the Chart.
@@ -154,6 +171,26 @@ export class Chart extends Component<Props, State> {
   }
 
   render() {
-    return <div id="chart"></div>;
+    return (
+      <div className="chart-wrapper">
+        <div className="chart-container">
+          <span>
+            <FontAwesomeIcon
+              icon={faAngleDoubleLeft}
+              className="previous-button"
+              onClick={() => this.props.onClickAngleHandler(-1)}
+            />
+          </span>
+          <div id="chart" className="chart"></div>
+          <span>
+            <FontAwesomeIcon
+              icon={faAngleDoubleRight}
+              className="next-button"
+              onClick={() => this.props.onClickAngleHandler(1)}
+            />
+          </span>
+        </div>
+      </div>
+    );
   }
 }

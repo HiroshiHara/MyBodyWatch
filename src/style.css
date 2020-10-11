@@ -1,6 +1,18 @@
 body {
   padding: 0px;
   margin: 0px;
+  background-color: #dee2e3;
+}
+
+.dialog-overlay {
+  background-color: grey;
+  opacity: 0.5;
+  height: 120%;
+  width: 100%;
+  position: fixed;
+  top: 100px;
+  left: 0;
+  z-index: 2;
 }
 
 a,
@@ -41,6 +53,10 @@ button {
   text-align: center;
 }
 
+.header-space {
+  height: 100px;
+}
+
 .logo-wrapper {
   text-align: left;
   top: 30px;
@@ -76,12 +92,19 @@ button {
   letter-spacing: 0.05em;
 }
 
+.dashboard-wrapper {
+  padding-top: 100px;
+}
+
+.dashboard-container {
+  display: flex;
+}
+
 .button-wrapper {
-  padding-top: 120px;
-  padding-left: 30px;
-  width: 50px;
-  height: 30px;
-  text-align: center;
+  display: inline-block;
+  margin-top: 30px;
+  margin-left: 30px;
+  height: 50px;
 }
 
 .button-wrapper button {
@@ -97,16 +120,58 @@ button {
   background-color: #38423a;
 }
 
-#chart {
-  padding-top: 45px;
-  opacity: 1;
+.chart-wrapper {
+  width: 100%;
 }
 
-#chart .c3-line-weight,
+.chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart {
+  background-color: #fafeff;
+  margin-top: 35px;
+  padding: 25px 45px 25px 10px;
+  width: 75%;
+  opacity: 1;
+  box-shadow: 0px 8px 16px -2px rgba(10, 10, 10, 0.1),
+    21px 11px 9px 11px rgba(90, 49, 49, 0.02),
+    7px 6px 3px -2px rgba(85, 161, 183, 0.9);
+}
+
+.chart .c3-line-weight,
 .c3-line-bmi,
 .c3-line-bfp,
 .c3-line-mm {
   stroke-width: 5px;
+}
+
+.c3-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.previous-button,
+.next-button {
+  cursor: pointer;
+  display: inline-block;
+  width: 6%;
+  font-size: 4em;
+}
+
+.previous-button:hover,
+.next-button:hover {
+  color: #38423a;
+}
+
+.previous-button {
+  margin-right: 40px;
+}
+
+.next-button {
+  margin-left: 40px;
 }
 
 .dialog-wrapper {
