@@ -25,11 +25,12 @@ app.listen(3000, () => {
   console.log("listening on 3000");
 });
 
-// Resolve GET request.
+// rootへのアクセス
 app.get("/", (req, res) => {
   res.sendFile(target + "/index.html");
 });
 
+// ログイン時のアクセス
 app.get("/login", (req, res) => {
   console.log("GET request catched for login.");
   user.find({ _id: req.query._id }, (err, docs) => {
@@ -37,8 +38,8 @@ app.get("/login", (req, res) => {
   });
 });
 
-// Resolve get request for initialize chart data.
-app.get("/init", (req, res) => {
+// チャート読み込み時のアクセス
+app.get("/load", (req, res) => {
   console.log("GET request catched for initialize chart data.");
   console.log(req.query.date);
   bodydata.find(
@@ -51,7 +52,7 @@ app.get("/init", (req, res) => {
   );
 });
 
-// Resolve post request for create bodydata.
+// bodydata登録時のアクセス
 app.post("/create", (req, res) => {
   console.log("POST request catched for create bodydata.");
   const { userid, weight, bmi, bfp, mm, kcal, date } = req.body;
@@ -79,7 +80,7 @@ app.post("/create", (req, res) => {
   });
 });
 
-// Resolve post request for update bodydata.
+// bodydata更新時のアクセス
 app.post("/update", (req, res) => {
   console.log("POST request catched for update bodydata.");
   const { _id, userid, weight, bmi, bfp, mm, kcal, date } = req.body;
@@ -105,11 +106,15 @@ app.post("/update", (req, res) => {
   );
 });
 
-// 404 error for illegal request.
+// 404エラー処理
 app.use((req, res) => {
   res.sendStatus(404);
 });
 
+/**
+ * 年月日をキーに該当するドキュメントの件数を取得する。
+ * @param {string} date bodydataのdateフィールド情報
+ */
 async function countDocsByDate(date) {
   const query = dateformat(date, "yyyy-mm-dd");
   const result = await bodydata.count(
