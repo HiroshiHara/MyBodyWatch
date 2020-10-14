@@ -5,8 +5,8 @@
 import React, { Component } from "react";
 import axios from "axios";
 import dateformat from "dateformat";
-import { calcBmi, calcMm, calcKcal } from "../util/calc";
-import { checkCreateData, checkUpdateData } from "../util/validation";
+import * as CALC from "../util/calc";
+import * as VALIDATOR from "../util/validation";
 import { User } from "../model/User";
 import { Header } from "./Header";
 import { Chart } from "./Chart";
@@ -38,7 +38,7 @@ let user = null;
 /**
  * this.state.tmpDateのデフォルト値。
  */
-const defaultDateState = dateformat("yyyy-mm-dd HH:MM");
+const defaultDateState = dateformat("yyyy-mm-dd");
 
 /**
  * this.state.currentYearMonthのデフォルト値。(yyyy-mm)
@@ -47,7 +47,7 @@ const defaultCurrentYM = defaultDateState.slice(0, 7);
 // ---------------------------------------------------------
 
 /**
- * トップレベルのコンポーネント。
+ * トップレベルのAppコンポーネント。
  */
 export class App extends Component<Props, State> {
   constructor(props: Props) {
@@ -88,7 +88,7 @@ export class App extends Component<Props, State> {
       result.bfp[i] = bodydataDocs[i].bfp;
       result.mm[i] = bodydataDocs[i].mm;
       result.kcal[i] = bodydataDocs[i].kcal;
-      const formatDate = dateformat(bodydataDocs[i].date, "yyyy-mm-dd HH:MM");
+      const formatDate = dateformat(bodydataDocs[i].date, "yyyy-mm-dd");
       result.date[i] = formatDate;
     }
     return result;
@@ -178,17 +178,17 @@ export class App extends Component<Props, State> {
     // 2. /createへPOST
     // --------------------------
     if (action === CONST.CREATE) {
-      if (!checkCreateData(user._id, this.state)) {
+      if (!VALIDATOR.validateCreateData(user._id, this.state)) {
         window.alert("Submit data is invalid.");
         return;
       }
       axios
         .post(CONST.CREATE, {
           userid: user._id,
-          weight: this.state.tmpWeight,
+          weight: CALC.formatToFixed(this.state.tmpWeight, 2),
           date: this.state.tmpDate,
           bmi: this.state.tmpBmi,
-          bfp: this.state.tmpBfp,
+          bfp: CALC.formatToFixed(this.state.tmpBfp, 2),
           mm: this.state.tmpMm,
           kcal: this.state.tmpKcal,
         })
@@ -209,7 +209,7 @@ export class App extends Component<Props, State> {
     // 2. /updateへPOST
     // --------------------------
     if (action === CONST.UPDATE) {
-      if (!checkUpdateData(user._id, this.state)) {
+      if (!VALIDATOR.validateUpdateData(user._id, this.state)) {
         window.alert("Submit data is invalid.");
         return;
       }
@@ -241,10 +241,11 @@ export class App extends Component<Props, State> {
   handleChange(e: Event<HTMLInputElement>, item: string) {
     if (item === CONST.WEIGHT_FIELDNAME) {
       this.setState({
+        // 体重のみPOST送信直前にフォーマット
         tmpWeight: e.target.value,
-        tmpBmi: calcBmi(user.height, e.target.value),
-        tmpMm: calcMm(e.target.value, this.state.tmpBfp),
-        tmpKcal: calcKcal(user.height, e.target.value, user.age, user.sex),
+        tmpBmi: CALC.calcBmi(user.height, e.target.value),
+        tmpMm: CALC.calcMm(e.target.value, this.state.tmpBfp),
+        tmpKcal: CALC.calcKcal(user.height, e.target.value, user.age, user.sex),
       });
     }
     if (item === CONST.DATE_FIELDNAME) {
@@ -254,22 +255,26 @@ export class App extends Component<Props, State> {
     }
     if (item === CONST.BMI_FIELDNAME) {
       this.setState({
+        // 自動計算のためフォーマット不要
         tmpBmi: e.target.value,
       });
     }
     if (item === CONST.BFP_FIELDNAME) {
       this.setState({
+        // 体脂肪率のみPOST送信直前にフォーマット
         tmpBfp: e.target.value,
-        tmpMm: calcMm(this.state.tmpWeight, e.target.value),
+        tmpMm: CALC.calcMm(this.state.tmpWeight, e.target.value),
       });
     }
     if (item === CONST.MM_FIELDNAME) {
       this.setState({
+        // 自動計算のためフォーマット不要
         tmpMm: e.target.value,
       });
     }
     if (item === CONST.KCAL_FIELDNAME) {
       this.setState({
+        // 自動計算のためフォーマット不要
         tmpKcal: e.target.value,
       });
     }
@@ -394,7 +399,7 @@ export class App extends Component<Props, State> {
               onSubmit={this.onClickDialogButtonHandler.bind(this)}
               onCancel={this.onClickDialogButtonHandler.bind(this)}
               _id={this.state.tmpId}
-              datetime={this.state.tmpDate}
+              date={this.state.tmpDate}
               weight={this.state.tmpWeight}
               bmi={this.state.tmpBmi}
               bfp={this.state.tmpBfp}

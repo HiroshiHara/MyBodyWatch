@@ -7,7 +7,7 @@ import React, { Component } from "react";
 
 type Props = {
   _id: ?string, // bodydata._id, 新規登録時はnull。
-  datetime: ?string, // bodydata.date, 新規登録時はnull。
+  date: ?string, // bodydata.date, 新規登録時はnull。
   weight: ?number, // bodydata.weight, 新規登録時は0。
   bmi: ?number, // bodydata.bmi, 新規登録時は0。
   bfp: ?number, // bodydata.bfp, 新規登録時は0。
@@ -55,17 +55,14 @@ export class Dialog extends Component<Props, State> {
   render() {
     const submitTitle = this.props.isCreate ? "ADD" : "UPDATE";
     const submitAction = this.props.isCreate ? "create" : "update";
-    const formatDatetime = dateformat(
-      this.props.datetime,
-      "yyyy-mm-dd'T'HH:MM"
-    );
+    const formatDate = dateformat(this.props.date, "yyyy-mm-dd");
     return (
       <div className="dialog-wrapper">
         <div className="dialog-container">
           <label>Date:</label>
           <input
-            type="datetime-local"
-            value={formatDatetime}
+            type="date"
+            value={formatDate}
             onChange={(e) => this.props.onChange(e, "date")}
             readOnly={!this.props.isCreate}
           ></input>
@@ -74,7 +71,7 @@ export class Dialog extends Component<Props, State> {
           <input
             type="number"
             value={this.props.weight}
-            step="0.1"
+            step="0.01"
             name="weight"
             onChange={(e) => this.props.onChange(e, "weight")}
           ></input>
@@ -93,7 +90,7 @@ export class Dialog extends Component<Props, State> {
           <input
             type="number"
             value={this.props.bfp}
-            step="0.1"
+            step="0.01"
             name="bfp"
             onChange={(e) => this.props.onChange(e, "bfp")}
           ></input>

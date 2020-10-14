@@ -1,7 +1,7 @@
 /* @flow */
 
 /**
- * calculate BMI, round to second decimal place.
+ * calculate BMI, round to first decimal place.
  * @param {number} height height(cm)
  * @param {number} weight weight(kg)
  */
@@ -10,11 +10,11 @@ export function calcBmi(height: number, weight: number): number {
     return 0;
   }
   const heightParseMeter = height / 100;
-  return Math.round((weight / (heightParseMeter * heightParseMeter)) * 10) / 10;
+  return formatToFixed(weight / (heightParseMeter * heightParseMeter), 1);
 }
 
 /**
- * calculate MM(muscle mass(%)), round to second decimal place.
+ * calculate MM(muscle mass(%)), round to first decimal place.
  * @param {number} weight weight(kg)
  * @param {number} bfp Body fat mass(%)
  */
@@ -25,7 +25,7 @@ export function calcMm(weight: number, bfp: number): number {
   const bfm = weight * (bfp / 100);
   const lbm = weight - bfm;
   const mm = lbm / 2;
-  return Math.round((mm / weight) * 100 * 10) / 10;
+  return formatToFixed((mm / weight) * 100, 1);
 }
 
 /**
@@ -51,5 +51,16 @@ export function calcKcal(
   if (sex === "female") {
     result = 9.247 * weight + 3.098 * height - 4.33 * age + 447.593;
   }
-  return Math.round(result);
+  return formatToFixed(result, 0);
+}
+
+/**
+ * 任意の小数点以下まで0埋めする。<br>
+ * valueの小数点桁数がdigitよりも多い場合、digitの次の位で四捨五入される。
+ * @param {number} value 数値
+ * @param {number} digit 小数点何桁まで0埋めするか(小数点第一位→1, 小数点第二位→2)
+ */
+export function formatToFixed(value: number, digit: number): number {
+  if (typeof value !== "number") value = Number(value);
+  return value.toFixed(digit);
 }

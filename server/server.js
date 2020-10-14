@@ -56,6 +56,7 @@ app.get("/load", (req, res) => {
 app.post("/create", (req, res) => {
   console.log("POST request catched for create bodydata.");
   const { userid, weight, bmi, bfp, mm, kcal, date } = req.body;
+  console.log(req.body);
   countDocsByDate(date).then((result) => {
     if (result === 0) {
       const createData = new bodydata({

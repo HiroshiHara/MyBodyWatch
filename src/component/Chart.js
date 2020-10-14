@@ -62,7 +62,7 @@ export class Chart extends Component<Props, State> {
        */
       data: {
         x: "date",
-        xFormat: "%Y-%m-%d %H:%M",
+        xFormat: "%Y-%m-%d",
         json: chartData,
         // "y2" define right y-axis for different unit.
         axes: {
