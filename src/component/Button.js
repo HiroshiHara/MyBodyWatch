@@ -5,11 +5,15 @@
 import React, { Component } from "react";
 
 type Props = {
-  title: string,
-  handleClick: Function,
+  title: string, // ボタンタイトル
+  handleClick: Function, // onClickイベントハンドラ
 };
 type State = {};
 
+/**
+ * Buttonコンポーネント。<br>
+ * ボタンタイトルとonClickイベントハンドラを設定可能。
+ */
 export class Button extends Component<Props, State> {
   constructor(props: Props) {
     super(props);

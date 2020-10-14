@@ -381,7 +381,7 @@ export class App extends Component<Props, State> {
             handleClick={this.onClickAddButtonHandler.bind(this)}
           />
           <Chart
-            initData={this.state.data}
+            chartData={this.state.data}
             currentYearMonth={this.state.currentYearMonth}
             onClickChart={this.onClickChartHandler.bind(this)}
             onClickAngleHandler={this.onClickAngleHandler.bind(this)}
@@ -391,7 +391,7 @@ export class App extends Component<Props, State> {
               isDialogOpen={true}
               isCreate={this.state.isCreate}
               onChange={this.handleChange.bind(this)}
-              onCreate={this.onClickDialogButtonHandler.bind(this)}
+              onSubmit={this.onClickDialogButtonHandler.bind(this)}
               onCancel={this.onClickDialogButtonHandler.bind(this)}
               _id={this.state.tmpId}
               datetime={this.state.tmpDate}
