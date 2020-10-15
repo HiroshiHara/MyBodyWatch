@@ -1,6 +1,5 @@
 // Get connection of MongoDB(In case of use mongoose)
 const mongoose = require("mongoose");
-const Double = require("@mongoosejs/double");
 const url = "mongodb://127.0.0.1:27017/mybodywatch";
 mongoose.connect(url, { useNewUrlParser: true });
 const db = mongoose.connection;
@@ -10,10 +9,10 @@ const bodydataSchema = new mongoose.Schema(
   {
     // _id: String,
     userid: String,
-    weight: Double,
-    bmi: Double,
-    bfp: Double,
-    mm: Double,
+    weight: Number,
+    bmi: Number,
+    bfp: Number,
+    mm: Number,
     kcal: Number,
     date: String,
   },
@@ -27,7 +26,7 @@ const userSchema = new mongoose.Schema(
     _id: String,
     age: Number,
     sex: String,
-    height: Double,
+    height: Number,
     birthday: String,
   },
   {

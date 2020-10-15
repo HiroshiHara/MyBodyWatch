@@ -182,6 +182,25 @@ export class Chart extends Component<Props, State> {
       point: {
         r: 5,
       },
+
+      /**
+       * Setting format for tooltip.
+       */
+      tooltip: {
+        format: {
+          value: function (value, ratio, id) {
+            if (
+              id === "weight" ||
+              id === "bmi" ||
+              id === "bfp" ||
+              id === "mm"
+            ) {
+              return value.toFixed(1);
+            }
+            return value;
+          },
+        },
+      },
     });
   }
 

@@ -69,6 +69,7 @@ export class App extends Component<Props, State> {
 
   /**
    * bodydataのドキュメントをkey:Array形式のオブジェクトに加工する。
+   * 数値項目が整数の場合、kcal以外は小数点第一位まで0埋めする。
    * @param {Object} bodydataDocs bodydataのドキュメント
    */
   chartDataProcessor(bodydataDocs: Object) {
@@ -83,10 +84,10 @@ export class App extends Component<Props, State> {
     };
     for (let i = 0; i < bodydataDocs.length; i++) {
       result._id[i] = bodydataDocs[i]._id;
-      result.weight[i] = bodydataDocs[i].weight;
-      result.bmi[i] = bodydataDocs[i].bmi;
-      result.bfp[i] = bodydataDocs[i].bfp;
-      result.mm[i] = bodydataDocs[i].mm;
+      result.weight[i] = CALC.formatToFixed(bodydataDocs[i].weight, 1);
+      result.bmi[i] = CALC.formatToFixed(bodydataDocs[i].bmi, 1);
+      result.bfp[i] = CALC.formatToFixed(bodydataDocs[i].bfp, 1);
+      result.mm[i] = CALC.formatToFixed(bodydataDocs[i].mm, 1);
       result.kcal[i] = bodydataDocs[i].kcal;
       const formatDate = dateformat(bodydataDocs[i].date, "yyyy-mm-dd");
       result.date[i] = formatDate;
@@ -185,10 +186,10 @@ export class App extends Component<Props, State> {
       axios
         .post(CONST.CREATE, {
           userid: user._id,
-          weight: CALC.formatToFixed(this.state.tmpWeight, 2),
+          weight: CALC.formatToFixed(this.state.tmpWeight, 1),
           date: this.state.tmpDate,
           bmi: this.state.tmpBmi,
-          bfp: CALC.formatToFixed(this.state.tmpBfp, 2),
+          bfp: CALC.formatToFixed(this.state.tmpBfp, 1),
           mm: this.state.tmpMm,
           kcal: this.state.tmpKcal,
         })
@@ -238,7 +239,7 @@ export class App extends Component<Props, State> {
    * @param {Event<HTMLInputElement>} e イベント
    * @param {string}} item どの入力項目かを判別する文字列
    */
-  handleChange(e: Event<HTMLInputElement>, item: string) {
+  onChangeDialogInputHandler(e: Event<HTMLInputElement>, item: string) {
     if (item === CONST.WEIGHT_FIELDNAME) {
       this.setState({
         // 体重のみPOST送信直前にフォーマット
@@ -395,7 +396,7 @@ export class App extends Component<Props, State> {
             <Dialog
               isDialogOpen={true}
               isCreate={this.state.isCreate}
-              onChange={this.handleChange.bind(this)}
+              onChange={this.onChangeDialogInputHandler.bind(this)}
               onSubmit={this.onClickDialogButtonHandler.bind(this)}
               onCancel={this.onClickDialogButtonHandler.bind(this)}
               _id={this.state.tmpId}

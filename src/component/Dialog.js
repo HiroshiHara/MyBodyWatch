@@ -70,7 +70,7 @@ export class Dialog extends Component<Props, State> {
           <label>Weight:</label>
           <input
             type="number"
-            value={this.props.weight}
+            value={this.props.weight !== 0 ? this.props.weight : ""}
             step="0.01"
             name="weight"
             onChange={(e) => this.props.onChange(e, "weight")}
@@ -79,7 +79,7 @@ export class Dialog extends Component<Props, State> {
           <label>BMI:</label>
           <input
             type="number"
-            value={this.props.bmi}
+            value={this.props.bmi !== 0 ? this.props.bmi : ""}
             step="0.1"
             name="bmi"
             onChange={(e) => this.props.onChange(e, "bmi")}
@@ -89,7 +89,7 @@ export class Dialog extends Component<Props, State> {
           <label>BFP:</label>
           <input
             type="number"
-            value={this.props.bfp}
+            value={this.props.bfp !== 0 ? this.props.bfp : ""}
             step="0.01"
             name="bfp"
             onChange={(e) => this.props.onChange(e, "bfp")}
@@ -98,7 +98,7 @@ export class Dialog extends Component<Props, State> {
           <label>MM:</label>
           <input
             type="number"
-            value={this.props.mm}
+            value={this.props.mm !== 0 ? this.props.mm : ""}
             step="0.1"
             name="mm"
             onChange={(e) => this.props.onChange(e, "mm")}
@@ -108,7 +108,7 @@ export class Dialog extends Component<Props, State> {
           <label>kcal:</label>
           <input
             type="number"
-            value={this.props.kcal}
+            value={this.props.kcal !== 0 ? this.props.kcal : ""}
             step="1"
             name="kcal"
             onChange={(e) => this.props.onChange(e, "kcal")}

@@ -28,7 +28,6 @@ export function validateCreateData(userid: string, states: Object): boolean {
 }
 
 export function validateUpdateData(_id: string, states: Object): boolean {
-  console.log(states);
   if (!states.tmpId || !states.tmpDate) {
     return false;
   }
