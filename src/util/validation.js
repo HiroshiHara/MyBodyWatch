@@ -2,7 +2,7 @@
  * @flow
  */
 
-export function checkCreateData(userid: string, states: Object): boolean {
+export function validateCreateData(userid: string, states: Object): boolean {
   if (!userid || !states.tmpDate) {
     return false;
   }
@@ -27,7 +27,7 @@ export function checkCreateData(userid: string, states: Object): boolean {
   return true;
 }
 
-export function checkUpdateData(states: Object): boolean {
+export function validateUpdateData(_id: string, states: Object): boolean {
   if (!states.tmpId || !states.tmpDate) {
     return false;
   }

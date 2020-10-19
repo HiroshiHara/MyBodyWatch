@@ -1,6 +1,8 @@
 // Get connection of MongoDB(In case of use mongoose)
 const mongoose = require("mongoose");
-const url = "mongodb://127.0.0.1:27017/mybodywatch";
+// const url = "mongodb://127.0.0.1:27017/mybodywatch";
+const url =
+  "mongodb+srv://mongo:mongo@mybodywatch.cae58.mongodb.net/mybodywatch?retryWrites=true&w=majority";
 mongoose.connect(url, { useNewUrlParser: true });
 const db = mongoose.connection;
 

@@ -6,41 +6,45 @@ import dateformat from "dateformat";
 import React, { Component } from "react";
 
 type Props = {
-  _id: ?string,
-  datetime: ?string,
-  weight: ?number,
-  bmi: ?number,
-  bfp: ?number,
-  mm: ?number,
-  kcal: ?number,
-  isDialogOpen: boolean,
-  isCreate: boolean,
-  onChange: Function,
-  onCreate: Function,
-  onCancel: Function,
+  _id: ?string, // bodydata._id, 新規登録時はnull。
+  date: ?string, // bodydata.date, 新規登録時はnull。
+  weight: ?number, // bodydata.weight, 新規登録時は0。
+  bmi: ?number, // bodydata.bmi, 新規登録時は0。
+  bfp: ?number, // bodydata.bfp, 新規登録時は0。
+  mm: ?number, // bodydata.mm, 新規登録時は0。
+  kcal: ?number, // bodydata.kcal, 新規登録時は0。
+  isDialogOpen: boolean, // ダイアログが開いているかどうか
+  isCreate: boolean, // ダイアログが新規登録用か更新用かどうか
+  onChange: Function, // 入力項目のonChangeハンドラ
+  onSubmit: Function, // ADDまたはUPDATEボタン押下時のハンドラ
+  onCancel: Function, // CANCELボタン押下時のハンドラ
 };
 type State = {};
 
+/**
+ * Dialogコンポーネント。<br>
+ * bodydataドキュメントを登録または更新を行う。
+ */
 export class Dialog extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
   }
 
   static defaultProps = {
-    isVisible: false,
+    isDialogOpen: false,
     isCreate: false,
     onChange: () => {},
-    onCreate: () => {},
+    onSubmit: () => {},
     onCancel: () => {},
   };
 
-  // When Dialog was closed, remove gray style.
+  // このコンポーネントが非表示になったときにオーバレイを外す
   componentWillUnmount() {
     const overlayDivElem = document.getElementById("dialog-overlay");
     overlayDivElem.removeAttribute("class", "dialog-overlay");
   }
 
-  // When open Dialog on modal, add gray style to body.
+  // このコンポーネントが表示されたときオーバレイを表示する
   componentDidMount() {
     if (this.props.isDialogOpen) {
       const overlayDivElem = document.getElementById("dialog-overlay");
@@ -51,18 +55,14 @@ export class Dialog extends Component<Props, State> {
   render() {
     const submitTitle = this.props.isCreate ? "ADD" : "UPDATE";
     const submitAction = this.props.isCreate ? "create" : "update";
-    const formatDatetime = dateformat(
-      this.props.datetime,
-      "yyyy-mm-dd'T'HH:MM"
-    );
+    const formatDate = dateformat(this.props.date, "yyyy-mm-dd");
     return (
       <div className="dialog-wrapper">
         <div className="dialog-container">
-          {/* <form> */}
           <label>Date:</label>
           <input
-            type="datetime-local"
-            value={formatDatetime}
+            type="date"
+            value={formatDate}
             onChange={(e) => this.props.onChange(e, "date")}
             readOnly={!this.props.isCreate}
           ></input>
@@ -70,8 +70,8 @@ export class Dialog extends Component<Props, State> {
           <label>Weight:</label>
           <input
             type="number"
-            value={this.props.weight}
-            step="0.1"
+            value={this.props.weight !== 0 ? this.props.weight : ""}
+            step="0.01"
             name="weight"
             onChange={(e) => this.props.onChange(e, "weight")}
           ></input>
@@ -79,7 +79,7 @@ export class Dialog extends Component<Props, State> {
           <label>BMI:</label>
           <input
             type="number"
-            value={this.props.bmi}
+            value={this.props.bmi !== 0 ? this.props.bmi : ""}
             step="0.1"
             name="bmi"
             onChange={(e) => this.props.onChange(e, "bmi")}
@@ -89,8 +89,8 @@ export class Dialog extends Component<Props, State> {
           <label>BFP:</label>
           <input
             type="number"
-            value={this.props.bfp}
-            step="0.1"
+            value={this.props.bfp !== 0 ? this.props.bfp : ""}
+            step="0.01"
             name="bfp"
             onChange={(e) => this.props.onChange(e, "bfp")}
           ></input>
@@ -98,7 +98,7 @@ export class Dialog extends Component<Props, State> {
           <label>MM:</label>
           <input
             type="number"
-            value={this.props.mm}
+            value={this.props.mm !== 0 ? this.props.mm : ""}
             step="0.1"
             name="mm"
             onChange={(e) => this.props.onChange(e, "mm")}
@@ -108,7 +108,7 @@ export class Dialog extends Component<Props, State> {
           <label>kcal:</label>
           <input
             type="number"
-            value={this.props.kcal}
+            value={this.props.kcal !== 0 ? this.props.kcal : ""}
             step="1"
             name="kcal"
             onChange={(e) => this.props.onChange(e, "kcal")}
@@ -120,7 +120,7 @@ export class Dialog extends Component<Props, State> {
             <input
               type="submit"
               value={submitTitle}
-              onClick={(e) => this.props.onCreate(e, submitAction)}
+              onClick={(e) => this.props.onSubmit(e, submitAction)}
             ></input>
             <input
               type="button"
@@ -128,7 +128,6 @@ export class Dialog extends Component<Props, State> {
               onClick={(e) => this.props.onCancel(e, "cancel")}
             ></input>
           </div>
-          {/* </form> */}
         </div>
       </div>
     );

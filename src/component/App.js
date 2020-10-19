@@ -5,33 +5,50 @@
 import React, { Component } from "react";
 import axios from "axios";
 import dateformat from "dateformat";
-import { calcBmi, calcMm, calcKcal } from "../util/calc";
-import { checkCreateData, checkUpdateData } from "../util/validation";
+import * as CALC from "../util/calc";
+import * as VALIDATOR from "../util/validation";
 import { User } from "../model/User";
 import { Header } from "./Header";
 import { Chart } from "./Chart";
 import { Button } from "./Button";
 import { Dialog } from "./Dialog";
+import * as CONST from "../const/const.js";
 
 type Props = {};
 type State = {
-  data: Object,
-  isDialogOpen: boolean,
-  isCreate: boolean,
-  tmpId: string,
-  tmpDate: string,
-  tmpWeight: number,
-  tmpBmi: number,
-  tmpBfp: number,
-  tmpMm: number,
-  tmpKcal: number,
-  currentYearMonth: string,
+  data: Object, //チャートに表示させるデータ
+  isDialogOpen: boolean, // 現在ダイアログが開いているかどうか
+  isCreate: boolean, // ダイアログが新規登録用か更新用かどうか
+  tmpId: string, // 1件分のデータのIDの一時領域
+  tmpDate: string, // 1件分のデータの年月の一時領域
+  tmpWeight: number, // 1件分のデータの体重の一時領域
+  tmpBmi: number, // 1件分のデータのBMIの一時領域
+  tmpBfp: number, // 1件分のデータの体脂肪率の一時領域
+  tmpMm: number, // 1件分のデータの筋肉率の一時領域
+  tmpKcal: number, // 1件分のデータの基礎代謝の一時領域
+  currentYearMonth: string, // 現在のチャートの年月
 };
 
+// -- global variables -------------------------------------
+/**
+ * ログイン中のユーザを格納する変数。
+ */
 let user = null;
-const defaultDateState = dateformat("yyyy-mm-dd HH:MM");
-const defaultCurrentYM = defaultDateState.slice(0, 7);
 
+/**
+ * this.state.tmpDateのデフォルト値。
+ */
+const defaultDateState = dateformat("yyyy-mm-dd");
+
+/**
+ * this.state.currentYearMonthのデフォルト値。(yyyy-mm)
+ */
+const defaultCurrentYM = defaultDateState.slice(0, 7);
+// ---------------------------------------------------------
+
+/**
+ * トップレベルのAppコンポーネント。
+ */
 export class App extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -50,8 +67,13 @@ export class App extends Component<Props, State> {
     };
   }
 
-  makeData(fetchData: Object) {
-    const data = {
+  /**
+   * bodydataのドキュメントをkey:Array形式のオブジェクトに加工する。
+   * 数値項目が整数の場合、kcal以外は小数点第一位まで0埋めする。
+   * @param {Object} bodydataDocs bodydataのドキュメント
+   */
+  chartDataProcessor(bodydataDocs: Object) {
+    const result = {
       _id: [],
       weight: [],
       bmi: [],
@@ -60,19 +82,22 @@ export class App extends Component<Props, State> {
       kcal: [],
       date: [],
     };
-    for (let i = 0; i < fetchData.length; i++) {
-      data._id[i] = fetchData[i]._id;
-      data.weight[i] = fetchData[i].weight;
-      data.bmi[i] = fetchData[i].bmi;
-      data.bfp[i] = fetchData[i].bfp;
-      data.mm[i] = fetchData[i].mm;
-      data.kcal[i] = fetchData[i].kcal;
-      const formatDate = dateformat(fetchData[i].date, "yyyy-mm-dd HH:MM");
-      data.date[i] = formatDate;
+    for (let i = 0; i < bodydataDocs.length; i++) {
+      result._id[i] = bodydataDocs[i]._id;
+      result.weight[i] = CALC.formatToFixed(bodydataDocs[i].weight, 1);
+      result.bmi[i] = CALC.formatToFixed(bodydataDocs[i].bmi, 1);
+      result.bfp[i] = CALC.formatToFixed(bodydataDocs[i].bfp, 1);
+      result.mm[i] = CALC.formatToFixed(bodydataDocs[i].mm, 1);
+      result.kcal[i] = bodydataDocs[i].kcal;
+      const formatDate = dateformat(bodydataDocs[i].date, "yyyy-mm-dd");
+      result.date[i] = formatDate;
     }
-    return data;
+    return result;
   }
 
+  /**
+   * ダイアログを閉じたときにコールされ、各種stateの値をデフォルトに戻す。
+   */
   closeDialog() {
     this.setState({
       isDialogOpen: false,
@@ -87,14 +112,28 @@ export class App extends Component<Props, State> {
     });
   }
 
-  addButtonHandleClick() {
+  /**
+   * 「ADD」ボタン押下時にコールされる関数。
+   */
+  onClickAddButtonHandler() {
     this.setState({
       isDialogOpen: true,
       isCreate: true,
     });
   }
 
-  chartHandleClick(
+  /**
+   * チャート上の任意のデータをクリックしたときにコールされ、
+   * そのデータをデフォルト値として更新ダイアログを表示する。
+   * @param {string} _id bodydata1件分のID
+   * @param {string} date _idに紐づく日付
+   * @param {number} weight _idに紐づく体重
+   * @param {number} bmi _idに紐づくBMI
+   * @param {number} bpf _idに紐づく体脂肪率
+   * @param {number} mm _idに紐づく筋肉量
+   * @param {number} kcal _idに紐づく基礎代謝
+   */
+  onClickChartHandler(
     _id: string,
     date: string,
     weight: number,
@@ -103,7 +142,6 @@ export class App extends Component<Props, State> {
     mm: number,
     kcal: number
   ) {
-    console.log(arguments);
     this.setState({
       isDialogOpen: true,
       tmpId: _id,
@@ -114,26 +152,44 @@ export class App extends Component<Props, State> {
       tmpMm: mm,
       tmpKcal: kcal,
     });
-    console.log(this.state);
   }
 
-  dialogButtonHandleClick(e: Event, action: string) {
-    if (action === "cancel") {
+  /**
+   * ダイアログのボタンいずれかを押下したときにコールされ、押下したボタンによって処理が分岐する。<br>
+   * <ul>
+   *    <li>CANCELボタン... {@link App#closeDialog()}を実行する
+   *    <li>ADDボタン... 1件のbodydataドキュメントを登録する
+   *    <li>UPDATEボタン... 1件のbodydataドキュメントを更新する
+   * </ul>
+   * @param {Event} e イベント
+   * @param {string} action "cancel" | "create" | "update"
+   */
+  onClickDialogButtonHandler(e: Event, action: string) {
+    // --------------------------
+    // case CANCEL
+    // closeDialog()をコール。
+    // --------------------------
+    if (action === CONST.CANCEL) {
       this.closeDialog();
       return;
     }
-    if (action === "create") {
-      if (!checkCreateData(user._id, this.state)) {
+    // --------------------------
+    // case CREATE
+    // 1. データのバリデーションチェックを行う。
+    // 2. /createへPOST
+    // --------------------------
+    if (action === CONST.CREATE) {
+      if (!VALIDATOR.validateCreateData(user._id, this.state)) {
         window.alert("Submit data is invalid.");
         return;
       }
       axios
-        .post("create", {
+        .post(CONST.CREATE, {
           userid: user._id,
-          weight: this.state.tmpWeight,
+          weight: CALC.formatToFixed(this.state.tmpWeight, 1),
           date: this.state.tmpDate,
           bmi: this.state.tmpBmi,
-          bfp: this.state.tmpBfp,
+          bfp: CALC.formatToFixed(this.state.tmpBfp, 1),
           mm: this.state.tmpMm,
           kcal: this.state.tmpKcal,
         })
@@ -143,19 +199,23 @@ export class App extends Component<Props, State> {
           }
           this.closeDialog();
           this.loadChart(this.state.currentYearMonth);
-          console.log("Success create data.");
         })
         .catch((err) => {
           console.error(err);
         });
     }
-    if (action === "update") {
-      if (!checkUpdateData(user._id, this.state)) {
+    // --------------------------
+    // case UPDATE
+    // 1. データのバリデーションチェックを行う。
+    // 2. /updateへPOST
+    // --------------------------
+    if (action === CONST.UPDATE) {
+      if (!VALIDATOR.validateUpdateData(user._id, this.state)) {
         window.alert("Submit data is invalid.");
         return;
       }
       axios
-        .post("update", {
+        .post(CONST.UPDATE, {
           _id: this.state.tmpId,
           weight: this.state.tmpWeight,
           date: this.state.tmpDate,
@@ -164,10 +224,9 @@ export class App extends Component<Props, State> {
           mm: this.state.tmpMm,
           kcal: this.state.tmpKcal,
         })
-        .then((res) => {
+        .then(() => {
           this.closeDialog();
           this.loadChart(this.state.currentYearMonth);
-          console.log("Success update data.");
         })
         .catch((err) => {
           console.log(err);
@@ -175,46 +234,61 @@ export class App extends Component<Props, State> {
     }
   }
 
-  handleChange(e: Event<HTMLInputElement>, item: string) {
-    if (item === "weight") {
+  /**
+   * ダイアログ内の入力項目が変更されたときコールされ、this.stateの値を都度更新する。
+   * @param {Event<HTMLInputElement>} e イベント
+   * @param {string}} item どの入力項目かを判別する文字列
+   */
+  onChangeDialogInputHandler(e: Event<HTMLInputElement>, item: string) {
+    if (item === CONST.WEIGHT_FIELDNAME) {
       this.setState({
+        // 体重のみPOST送信直前にフォーマット
         tmpWeight: e.target.value,
-        tmpBmi: calcBmi(user.height, e.target.value),
-        tmpMm: calcMm(e.target.value, this.state.tmpBfp),
-        tmpKcal: calcKcal(user.height, e.target.value, user.age, user.sex),
+        tmpBmi: CALC.calcBmi(user.height, e.target.value),
+        tmpMm: CALC.calcMm(e.target.value, this.state.tmpBfp),
+        tmpKcal: CALC.calcKcal(user.height, e.target.value, user.age, user.sex),
       });
     }
-    if (item === "date") {
+    if (item === CONST.DATE_FIELDNAME) {
       this.setState({
         tmpDate: e.target.value,
       });
     }
-    if (item === "bmi") {
+    if (item === CONST.BMI_FIELDNAME) {
       this.setState({
+        // 自動計算のためフォーマット不要
         tmpBmi: e.target.value,
       });
     }
-    if (item === "bfp") {
+    if (item === CONST.BFP_FIELDNAME) {
       this.setState({
+        // 体脂肪率のみPOST送信直前にフォーマット
         tmpBfp: e.target.value,
-        tmpMm: calcMm(this.state.tmpWeight, e.target.value),
+        tmpMm: CALC.calcMm(this.state.tmpWeight, e.target.value),
       });
     }
-    if (item === "mm") {
+    if (item === CONST.MM_FIELDNAME) {
       this.setState({
+        // 自動計算のためフォーマット不要
         tmpMm: e.target.value,
       });
     }
-    if (item === "kcal") {
+    if (item === CONST.KCAL_FIELDNAME) {
       this.setState({
+        // 自動計算のためフォーマット不要
         tmpKcal: e.target.value,
       });
     }
   }
 
+  /**
+   * チャート左右のアイコンをクリックしたときにコールされる。<br>
+   * 左側のアイコンであれば前月データを検索し、右側であれば翌月データを検索する。
+   * @param {number} direction -1であれば前月データをクリック、1であれば翌月データをクリック
+   */
   onClickAngleHandler(direction: number) {
     const current = new Date(this.state.currentYearMonth);
-    if (direction === -1) {
+    if (direction === CONST.SEARCH_KEY_PREVIOUS) {
       current.setMonth(current.getMonth() - 1);
       const previous = dateformat(current, "yyyy-mm");
       this.setState({
@@ -223,16 +297,22 @@ export class App extends Component<Props, State> {
       this.loadChart(previous);
       return;
     }
-    if (direction === 1) {
+    if (direction === CONST.SEARCH_KEY_NEXT) {
       current.setMonth(current.getMonth() + 1);
       const next = dateformat(current, "yyyy-mm");
       this.setState({
         currentYearMonth: next,
       });
       this.loadChart(next);
+      return;
     }
   }
 
+  /**
+   * このコンポーネントがマウントされたときにコールされる。
+   * ユーザIDをキーに、グローバル変数userを初期化する。
+   * その後、チャート用データを読み込む。
+   */
   componentDidMount() {
     let result = null;
     axios
@@ -256,14 +336,14 @@ export class App extends Component<Props, State> {
         console.error(err);
       });
 
-    // When user keydown 'Esc', close Dialog.
+    // Escキー押下時にダイアログを閉じるようイベントハンドラを設定
     document.onkeydown = (e) => {
       if (e.keyCode === 27) {
         this.closeDialog();
       }
     };
 
-    // When user click outside Dialog, close Dialog.
+    // ダイアログの外側をクリックしたときにダイアログを閉じるようイベントハンドラを設定
     const overlayDivElem = document.getElementById("dialog-overlay");
     overlayDivElem.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -271,36 +351,21 @@ export class App extends Component<Props, State> {
     });
   }
 
-  // loadChart() {
-  //   let result = null;
-  //   axios
-  //     .get("/init", {
-  //       params: {
-  //         _id: user._id,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       result = this.makeData(res.data);
-  //       this.setState({
-  //         data: result,
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       console.error(err);
-  //     });
-  // }
-
+  /**
+   * YYYY-MM形式の年月文字列をキーに、その年月分のbodydataドキュメントを取得する。
+   * @param {string} yearMonth YYYY-MM形式の年月文字列
+   */
   loadChart(yearMonth: string) {
     let result = null;
     axios
-      .get("/init", {
+      .get("/load", {
         params: {
           _id: user._id,
           date: yearMonth,
         },
       })
       .then((res) => {
-        result = this.makeData(res.data);
+        result = this.chartDataProcessor(res.data);
         this.setState({
           data: result,
         });
@@ -319,23 +384,23 @@ export class App extends Component<Props, State> {
         <div className="main-wrapper">
           <Button
             title="ADD"
-            handleClick={this.addButtonHandleClick.bind(this)}
+            handleClick={this.onClickAddButtonHandler.bind(this)}
           />
           <Chart
-            initData={this.state.data}
+            chartData={this.state.data}
             currentYearMonth={this.state.currentYearMonth}
-            onClickChart={this.chartHandleClick.bind(this)}
+            onClickChart={this.onClickChartHandler.bind(this)}
             onClickAngleHandler={this.onClickAngleHandler.bind(this)}
           />
           {this.state.isDialogOpen ? (
             <Dialog
               isDialogOpen={true}
               isCreate={this.state.isCreate}
-              onChange={this.handleChange.bind(this)}
-              onCreate={this.dialogButtonHandleClick.bind(this)}
-              onCancel={this.dialogButtonHandleClick.bind(this)}
+              onChange={this.onChangeDialogInputHandler.bind(this)}
+              onSubmit={this.onClickDialogButtonHandler.bind(this)}
+              onCancel={this.onClickDialogButtonHandler.bind(this)}
               _id={this.state.tmpId}
-              datetime={this.state.tmpDate}
+              date={this.state.tmpDate}
               weight={this.state.tmpWeight}
               bmi={this.state.tmpBmi}
               bfp={this.state.tmpBfp}
