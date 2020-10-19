@@ -12,20 +12,37 @@ import c3 from "c3";
 import "c3/c3.css";
 
 type Props = {
-  initData: Object,
-  currentYearMonth: string,
-  onClickChart: Function,
-  onClickAngleHandler: Function,
+  chartData: Object, // 表示するデータ(カラム名:配列 のオブジェクト)
+  currentYearMonth: string, // 表示するデータの期間(YYYY-MM)
+  onClickChart: Function, // チャート上の任意のデータをクリックしたときのイベントハンドラ
+  onClickAngleHandler: Function, // チャート左右のアイコンをクリックしたときのイベントハンドラ
 };
 type State = {};
 
+/**
+ * Chartコンポーネント。<br>
+ * bodydataドキュメントをもとにグラフを表示する。<br>
+ * 表示するデータは以下の通り。<br>
+ * <ul>
+ *    <li>体重(kg)</li>
+ *    <li>体脂肪率(%)</li>
+ *    <li>BMI</li>
+ *    <li>筋肉量(%)</li>
+ *    <li>基礎代謝(kcal)</li>
+ * </ul>
+ */
 export class Chart extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
   }
 
+  /**
+   * チャートをレンダリングするメソッド。<br>
+   * c3.generate()を内部で実行する。直接render()内でc3.generate()を実行しても正常にレンダリングされないので、<br>
+   * このメソッドはcomponentDidMount()でコールされる。
+   */
   renderChart() {
-    const chartData = this.props.initData;
+    const chartData = this.props.chartData;
     const onClickChart = this.props.onClickChart;
     c3.generate({
       /**
@@ -45,7 +62,7 @@ export class Chart extends Component<Props, State> {
        */
       data: {
         x: "date",
-        xFormat: "%Y-%m-%d %H:%M",
+        xFormat: "%Y-%m-%d",
         json: chartData,
         // "y2" define right y-axis for different unit.
         axes: {
@@ -55,8 +72,16 @@ export class Chart extends Component<Props, State> {
         types: {
           kcal: "bar",
         },
+        // -------------------------------------------------------------------
+        // chartDataにはデフォルトでbodydataの_idプロパティも格納されているので、
+        // チャートに表示されないよう隠す。
+        // -------------------------------------------------------------------
         hide: ["_id"],
-        onclick: function (d, i) {
+        // -------------------------------------------------------------------
+        // チャート上の任意のデータをクリックしたときのイベントハンドラ。
+        // データの値を引数にthis.props.onClickChartを実行する。
+        // -------------------------------------------------------------------
+        onclick: function (d) {
           const index = d.index;
           const chartId = chartData._id[index];
           const chartDate = chartData.date[index];
@@ -157,6 +182,25 @@ export class Chart extends Component<Props, State> {
       point: {
         r: 5,
       },
+
+      /**
+       * Setting format for tooltip.
+       */
+      tooltip: {
+        format: {
+          value: function (value, ratio, id) {
+            if (
+              id === "weight" ||
+              id === "bmi" ||
+              id === "bfp" ||
+              id === "mm"
+            ) {
+              return value.toFixed(1);
+            }
+            return value;
+          },
+        },
+      },
     });
   }
 
@@ -164,8 +208,12 @@ export class Chart extends Component<Props, State> {
     this.renderChart();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.initData !== this.props.initData) {
+  /**
+   * 更新前のbodydataと更新後のbodydataが異なる場合のみ再レンダリングを行う。
+   * @param {Object} prevProps 更新前のprops
+   */
+  componentDidUpdate(prevProps: Object) {
+    if (prevProps.chartData !== this.props.chartData) {
       this.renderChart();
     }
   }
