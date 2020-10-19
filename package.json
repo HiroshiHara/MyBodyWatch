@@ -8,7 +8,8 @@
     "flow": "flow",
     "start": "webpack-dev-server --open",
     "dev": "webpack --mode development --watch",
-    "build": "webpack --mode production "
+    "build": "webpack --mode production ",
+    "heroku-prebuild": "cd ./server && npm install"
   },
   "author": "hrhrs",
   "license": "ISC",
