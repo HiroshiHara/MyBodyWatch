@@ -10,14 +10,15 @@ const user = model.user;
 const app = express();
 
 // Resolve path.
-const target = path.resolve("../dist/");
+const target = path.join(__dirname, 'dist');
 
 // Setup the body-parser.
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Rooting for static files
-app.use(express.static(target));
+// app.use(express.static(target));
+app.use(express.static(path.join(__dirname, 'dist')));
 // app.use(`/fuga/piyo`, express.static(path.join(__dirname, 'moi'))));
 
 // Listen on port heroku default port or 3000.
