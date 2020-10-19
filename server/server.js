@@ -20,9 +20,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(target));
 // app.use(`/fuga/piyo`, express.static(path.join(__dirname, 'moi'))));
 
-// Listen on port 3000.
-app.listen(3000, () => {
-  console.log("listening on 3000");
+// Listen on port heroku default port or 3000.
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("listening on " + PORT);
 });
 
 // rootへのアクセス
