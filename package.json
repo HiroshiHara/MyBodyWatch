@@ -9,7 +9,7 @@
     "start": "webpack-dev-server --open",
     "dev": "webpack --mode development --watch",
     "build": "webpack --mode production ",
-    "heroku-prebuild": "cd ./server && npm install"
+    "heroku-prebuild": "cd ./server && npm install && node ./server/server.js"
   },
   "author": "hrhrs",
   "license": "ISC",
