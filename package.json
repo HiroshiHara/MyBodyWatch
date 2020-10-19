@@ -6,10 +6,10 @@
   "scripts": {
     "test": "jest",
     "flow": "flow",
-    "start": "webpack-dev-server --open",
     "dev": "webpack --mode development --watch",
     "build": "webpack --mode production ",
-    "heroku-prebuild": "cd ./server && npm install && node server.js"
+    "start": "node ./server/server.js",
+    "heroku-postbuild": "cd ./server && npm install && cd .. && webpack --mode production"
   },
   "author": "hrhrs",
   "license": "ISC",
