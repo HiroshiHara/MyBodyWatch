@@ -10,7 +10,7 @@ const user = model.user;
 const app = express();
 
 // Resolve path.
-const target = path.join(__dirname, 'dist');
+const target = path.join(__dirname, '../dist');
 
 // Setup the body-parser.
 app.use(bodyParser.json());
