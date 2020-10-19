@@ -11,7 +11,7 @@ module.exports = {
    *  development...
    *    bundle files debuggable.
    */
-  mode: "development",
+  // mode: "production",
 
   /**
    * Mapping between original source and bundled file.
@@ -21,7 +21,7 @@ module.exports = {
   /**
    * Automatially build when changed files.
    */
-  watch: true,
+  // watch: false,
 
   /**
    * Ignore file or direcotry for *watch*.
