@@ -18,7 +18,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Rooting for static files
 // app.use(express.static(target));
-app.use(express.static(path.join(__dirname, '/dist')));
+app.use(express.static(path.join(__dirname, '../dist')));
+console.log(path.join(__dirname, '../dist'))
 // app.use(`/fuga/piyo`, express.static(path.join(__dirname, 'moi'))));
 
 // Listen on port heroku default port or 3000.
