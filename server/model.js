@@ -9,7 +9,7 @@ const db = mongoose.connection;
 // define schema.
 const bodydataSchema = new mongoose.Schema(
   {
-    // _id: String,
+    _id: String,
     userid: String,
     weight: Number,
     bmi: Number,

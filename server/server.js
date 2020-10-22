@@ -3,6 +3,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const model = require("./model");
 const dateformat = require("dateformat");
+const mongoose = require("mongoose");
 const bodydata = model.bodydata;
 const user = model.user;
 
@@ -59,10 +60,12 @@ app.get("/load", (req, res) => {
 app.post("/create", (req, res) => {
   console.log("POST request catched for create bodydata.");
   const { userid, weight, bmi, bfp, mm, kcal, date } = req.body;
-  console.log(req.body);
+  const _id = new mongoose.Types.ObjectId
+  console.log(_id.toString());
   countDocsByDate(date).then((result) => {
     if (result === 0) {
       const createData = new bodydata({
+        _id: _id.toString(),
         userid: userid,
         weight: weight,
         bmi: bmi,
