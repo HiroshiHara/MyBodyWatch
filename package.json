@@ -1,15 +1,14 @@
 {
   "name": "mybodywatch",
   "version": "1.0.0",
-  "description": "fuck",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest",
     "flow": "flow",
     "dev": "webpack --mode development --watch",
-    "build": "webpack --mode production ",
-    "start": "node ./server/server.js",
-    "heroku-postbuild": "cd ./server && npm install && cd .. && webpack --mode production"
+    "build": "sh script/deploy.sh",
+    "heroku-postbuild": "cd ./server && npm install && cd .. && npm run build"
   },
   "author": "hrhrs",
   "license": "ISC",
