@@ -3,8 +3,9 @@ start=$(date "+%Y/%m/%d-%H:%M:%S")
 echo "deploy.sh start. ${start}"
 
 # webpackで各種ファイルのバンドリング
+# 環境変数NODE_ENVを作成、値を設定することでソースマップを作成させないようにする
 echo "run webpack..."
-webpack --mode production
+NODE_ENV=production webpack --mode production
 
 # srcディレクトリの削除
 echo "removing **src** directory..."

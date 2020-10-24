@@ -16,7 +16,7 @@ module.exports = {
   /**
    * Mapping between original source and bundled file.
    */
-  devtool: "inline-source-map",
+  // devtool: "inline-source-map",
 
   /**
    * Automatially build when changed files.
@@ -120,3 +120,6 @@ module.exports = {
     extensions: [".js", ".jsx", ".json"],
   },
 };
+
+// switch setting for sourcemap by NODE_ENV.
+if (process.env.NODE_ENV != 'production') module.exports.devtool = 'inline-source-map';
